@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  # build_and_test_rust:
+  #   docker: # use the docker executor type; machine and macos executors are also supported
+  #     - image: # the primary container, where your job's commands are run
+  #   working_directory: ~/repo/rust
+  #   steps:
+  #     - checkout # check out the code in the project directory
+  #     # Download and cache dependencies
+
+  build_and_test_js:
+    docker: # use the docker executor type; machine and macos executors are also supported
+      - image: circleci/node:10.0.0 # the primary container, where your job's commands are run
+    working_directory: ~/repo
+    steps:
+      - checkout # check out the code in the project directory
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "js/package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+          name: Install dependencies
+          command: |
+            cd js
+            npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "js/package.json" }}
+      - run:
+          name: Unit tests
+          command: |
+            cd js
+            npm run test
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # - build_and_test_rust
+      - build_and_test_js
