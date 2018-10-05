@@ -31,11 +31,8 @@ let rec calculate_floor = (~data, ~floor, ~index) => {
   };
 };
 
-type exec = (string, int) => int;
-
-let exec = (~initial_floor=0, ~data) =>
-  calculate_floor(~data, ~floor=initial_floor, ~index=0);
-
-type solve = string => int;
-
-let solve = data => exec(~data);
+let solve = data =>
+  Js.Promise.make((~resolve, ~reject) => {
+    let result = calculate_floor(~floor=0, ~data, ~index=0);
+    resolve(. result);
+  });
