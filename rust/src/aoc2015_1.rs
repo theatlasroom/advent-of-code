@@ -7,8 +7,7 @@ struct TestData {
     output: i32,
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum Action {
     UP,
     DOWN,
