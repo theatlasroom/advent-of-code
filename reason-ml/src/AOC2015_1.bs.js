@@ -3,6 +3,7 @@
 
 var $$String = require("bs-platform/lib/js/string.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
+var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
 function resolve_action(str) {
   switch (str) {
@@ -45,14 +46,14 @@ function calculate_floor(data, _floor, _index) {
   };
 }
 
+var UnknownError = Caml_exceptions.create("AOC2015_1.UnknownError");
+
 function solve(data) {
-  return new Promise((function (resolve, _) {
-                var result = calculate_floor(data, 0, 0);
-                return resolve(result);
-              }));
+  return Promise.resolve(calculate_floor(data, 0, 0));
 }
 
 exports.resolve_action = resolve_action;
 exports.calculate_floor = calculate_floor;
+exports.UnknownError = UnknownError;
 exports.solve = solve;
 /* No side effect */
