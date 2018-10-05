@@ -12,7 +12,7 @@ let resolve_action = str =>
   | _ => NONE
   };
 
-type calculate_floor = (string, int, int) => int;
+type calculate_floor = (string, int, int) => option(int);
 
 let rec calculate_floor = (~data, ~floor, ~index) => {
   let len = String.length(data);
@@ -27,12 +27,23 @@ let rec calculate_floor = (~data, ~floor, ~index) => {
     let next_index = index + 1;
     calculate_floor(~data, ~floor=next_floor, ~index=next_index);
   } else {
-    floor;
+    Some(floor);
   };
 };
 
+exception UnknownError(string);
+
 let solve = data =>
-  Js.Promise.make((~resolve, ~reject) => {
-    let result = calculate_floor(~floor=0, ~data, ~index=0);
-    resolve(. result);
-  });
+  /* Js.Promise.make((~resolve, ~reject) => {
+       let result = calculate_floor(~floor=0, ~data, ~index=0);
+       switch (result) {
+       | Some(data) => resolve(. data)
+       | None => reject(. UnknownError("Something went wrong"))
+       };
+     }); */
+  Js.Promise.resolve(
+    {
+      let result = calculate_floor(~floor=0, ~data, ~index=0);
+      result;
+    },
+  );
