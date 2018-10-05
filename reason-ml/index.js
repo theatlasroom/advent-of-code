@@ -20,9 +20,17 @@ const solve = async ({ name, file, solver }) => {
 }
 
 async function solveProblems() {
-  console.log('*****************************')
-  console.log('🎉 Advent of Code solutions 🎉')
-  console.log('*****************************')
+  console.log(
+    '****************************************************************'
+  )
+  console.log('⚡️🎉 Advent of Code solutions 🎉⚡️')
+  console.log('\nLanguage: ReasonML ⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️')
+  console.log(
+    `\nThis is an attempt at solutions to the problems using reasonml,\nthis is purely as a exercise in learning reason, so i am sure \nthe solutions are not "optimal"`
+  )
+  console.log(
+    '****************************************************************'
+  )
   try {
     for (let problem of problems) {
       await solve(problem)
@@ -30,9 +38,13 @@ async function solveProblems() {
   } catch (err) {
     console.error(err)
   }
-  console.log('*****************************')
-  console.log('🎉 Fin                      🎉')
-  console.log('*****************************')
+  console.log(
+    '****************************************************************'
+  )
+  console.log('🎉🎉🎉 Fin 🎉🎉🎉')
+  console.log(
+    '****************************************************************'
+  )
 }
 
 async function exec() {
