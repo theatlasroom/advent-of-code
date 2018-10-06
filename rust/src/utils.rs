@@ -12,9 +12,9 @@ pub fn read_file(filename: &str) -> String {
     String::from(contents)
 }
 
-pub fn read_file_by_lines(filename: &str) -> Vec<String>{
-    let mut f = File::open(filename).expect("file not found");
-    let mut file = BufReader::new(&f);
+pub fn read_file_by_lines(filename: &str) -> Vec<String> {
+    let f = File::open(filename).expect("file not found");
+    let file = BufReader::new(&f);
     let mut data = vec![];
     for line in file.lines() {
         let l = line.unwrap();
