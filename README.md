@@ -3,3 +3,4 @@ Working through old AoC exercises:
 
 * [Rust](./rust)
 * [JS](./js)
+* [ReasonML]('./reason-ml')

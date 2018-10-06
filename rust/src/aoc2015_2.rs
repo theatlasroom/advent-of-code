@@ -45,8 +45,7 @@ fn compute_surface_area(cuboid: &BoxDimensions) -> i32 {
     ];
     faces.sort();
     let min = faces[0];
-    println!("{:?} {}", faces, min);
-    2 * faces[0] + 2 * faces[1] + 2 * faces[2] + min
+    ((2 * faces[0]) + (2 * faces[1]) + (2 * faces[2]) + min)
 }
 
 #[test]

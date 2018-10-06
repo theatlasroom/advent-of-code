@@ -2,11 +2,6 @@ use utils;
 
 pub const INITIAL_FLOOR: i32 = 0;
 
-struct TestData {
-    input: String,
-    output: i32,
-}
-
 #[derive(Debug, PartialEq)]
 enum Action {
     UP,
@@ -18,7 +13,7 @@ fn parse_instruction(instruction: &str) -> Action {
     match instruction {
         "(" => Action::UP,
         ")" => Action::DOWN,
-        _ => Action::NONE
+        _ => Action::NONE,
     }
 }
 
@@ -47,28 +42,52 @@ pub fn solve() -> i32 {
 }
 
 #[test]
-fn it_will_convert_instructions_into_enum_value(){
-    for c in
-        "!@#$%^&*{}[]1234567890abcdefghijklmnopqrstuvwxyz|+_=-`~';:?/.,<>"
+fn it_will_convert_instructions_into_enum_value() {
+    for c in "!@#$%^&*{}[]1234567890abcdefghijklmnopqrstuvwxyz|+_=-`~';:?/.,<>"
         .to_string()
-        .chars() {
-            assert_eq!(parse_instruction(&c.to_string()), Action::NONE);
+        .chars()
+    {
+        assert_eq!(parse_instruction(&c.to_string()), Action::NONE);
     }
 }
 
 #[test]
-fn it_will_correctly_compute_test_data(){
+fn it_will_correctly_compute_test_data() {
     let td = [
-        TestData { input: String::from("(())"), output: 0 },
-        TestData { input: String::from("((("), output: 3 },
-        TestData { input: String::from("(()(()("), output: 3 },
-        TestData { input: String::from("))((((("), output: 3 },
-        TestData { input: String::from("())"), output: -1 },
-        TestData { input: String::from("))("), output: -1 },
-        TestData { input: String::from(")))"), output: -3 },
-        TestData { input: String::from(")())())"), output: -3 },
+        TestData {
+            input: String::from("(())"),
+            output: 0,
+        },
+        TestData {
+            input: String::from("((("),
+            output: 3,
+        },
+        TestData {
+            input: String::from("(()(()("),
+            output: 3,
+        },
+        TestData {
+            input: String::from("))((((("),
+            output: 3,
+        },
+        TestData {
+            input: String::from("())"),
+            output: -1,
+        },
+        TestData {
+            input: String::from("))("),
+            output: -1,
+        },
+        TestData {
+            input: String::from(")))"),
+            output: -3,
+        },
+        TestData {
+            input: String::from(")())())"),
+            output: -3,
+        },
     ];
-    for data in td.iter(){
+    for data in td.iter() {
         assert_eq!(exec(&data.input, INITIAL_FLOOR), data.output);
     }
 }
