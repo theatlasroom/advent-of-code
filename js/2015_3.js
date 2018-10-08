@@ -1,3 +1,4 @@
+'use strict'
 /* Santa is delivering presents to an infinite two-dimensional grid of houses.
 
    He begins by delivering a present to the house at his starting location, and then an elf at the North Pole calls him via radio and tells him where to move next. Moves are always exactly one house to the north (^), south (v), east (>), or west (<). After each move, he delivers another present to the house at his new location.
@@ -13,39 +14,26 @@
 /* naive: use a regex to scan the input for all occurrences of the strings we want to find */
 /* "better" create a parser */
 
-'use strict'
-
 const utils = require('../utils')
 const Actions = {
   UP: '^',
   DOWN: 'v',
   LEFT: '<',
-  RIGHTT: '>',
+  RIGHT: '>',
 }
 
-const Point = function(opts = { x: 0, y: 0 }) {
-  const that = this
-  that.coords = { x: 0, y: 0 }
-
-  function init(opts) {
-    that.coords = { ...opts }
-  }
-
-  init(opts)
-
-  return {
-    add: pt => ({ x: pt.x + that.coords.x, y: pt.y + that.coords.y }),
-    get: () => that.coords,
-    generateKey: () => `x${that.coords.x}y${that.coords.y}`,
-  }
-}
+const move = (currentPosition, delta) => ({
+  x: delta.x + currentPosition.x,
+  y: delta.y + currentPosition.y,
+})
+const generateKey = pt => `x${pt.x}y${pt.y}`
 
 function matchDirection(action = null) {
   switch (action) {
     case Actions.UP:
-      return { x: 0, y: 1 }
-    case Actions.DOWN:
       return { x: 0, y: -1 }
+    case Actions.DOWN:
+      return { x: 0, y: 1 }
     case Actions.LEFT:
       return { x: -1, y: 0 }
     case Actions.RIGHT:
@@ -57,28 +45,27 @@ function matchDirection(action = null) {
 
 function nextHouse(currentPosition, action) {
   const delta = matchDirection(action)
-  return currentPosition.add(delta)
+  return move(currentPosition, delta)
 }
 
 function followDirection(directions) {
   const houses = new Set()
-  const cursor = 0
-  let position = new Point()
-  console.log(position)
+  let cursor = 0,
+    currentPosition = { x: 0, y: 0 }
+  houses.add(generateKey(currentPosition)) // add the start point
+  // move across the input and calculate the next position
+  // the next position will be used for a unique key in the set
   while (cursor < directions.length) {
-    const action = directions[cursor]
-    position = nextHouse(position, action)
-    console.log('position', position)
-    const key = position.generateKey()
-    houses.add(key)
-    console.log('key', key, 'size', houses.size)
+    currentPosition = nextHouse(currentPosition, directions[cursor])
+    houses.add(generateKey(currentPosition))
     cursor++
   }
+
   return houses.size
 }
 
 function calculateDeliveries(directions) {
-  return followDirection(directions, 0)
+  return followDirection(directions)
 }
 
 const args = process.argv
