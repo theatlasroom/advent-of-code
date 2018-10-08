@@ -1,0 +1,8 @@
+{
+  "editor.fontFamily": "Menlo, Consolas, DejaVu Sans Mono, monospace",
+  "editor.fontSize": 14,
+  "editor.fontWeight": "500",
+  "editor.fontLigatures": true,
+  "workbench.fontAliasing": "auto",
+  "workbench.colorTheme": "Ayu Mirage"
+}
