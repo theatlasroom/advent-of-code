@@ -64,6 +64,56 @@ fn it_will_compute_surface_area() {
     assert_eq!(compute_surface_area(&b2), 43);
 }
 
+// TODO: should be implemented for the struct...
+fn compute_bow_ribbon_length(cuboid: &BoxDimensions) -> i32 {
+    // compute all the faces
+    // sort to find the smallest face
+    let mut faces = vec![cuboid.length, cuboid.width, cuboid.height];
+    faces.sort();
+    2 * (faces[0] + faces[1])
+}
+
+#[test]
+fn it_will_compute_bow_ribbon_length_required() {
+    let b = BoxDimensions {
+        length: 2,
+        width: 3,
+        height: 4,
+    };
+    assert_eq!(compute_bow_ribbon_length(&b), 10);
+    let b2 = BoxDimensions {
+        length: 1,
+        width: 1,
+        height: 10,
+    };
+    assert_eq!(compute_bow_ribbon_length(&b2), 4);
+}
+
+// TODO: should be implemented for the struct...
+fn compute_wrapping_ribbon_length(cuboid: &BoxDimensions) -> i32 {
+    // compute all the faces
+    // sort to find the smallest face
+    let mut faces = vec![cuboid.length, cuboid.width, cuboid.height];
+    faces.sort();
+    faces[0] * faces[1] * faces[2]
+}
+
+#[test]
+fn it_will_compute_wrapping_ribbon_length_required() {
+    let b = BoxDimensions {
+        length: 2,
+        width: 3,
+        height: 4,
+    };
+    assert_eq!(compute_wrapping_ribbon_length(&b), 24);
+    let b2 = BoxDimensions {
+        length: 1,
+        width: 1,
+        height: 10,
+    };
+    assert_eq!(compute_wrapping_ribbon_length(&b2), 10);
+}
+
 fn calculate_wrapping_paper(_data: &str) -> i32 {
     let lines = utils::read_file_by_lines("../data/2015_2.txt");
     let mut sum: i32 = 0;
