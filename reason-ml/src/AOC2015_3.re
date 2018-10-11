@@ -10,8 +10,9 @@
    ^>v< delivers presents to 4 houses in a square, including twice to the house at his starting/ending location.
    ^v^v^v^v^v delivers a bunch of presents to some very lucky children at only 2 houses. */
 
-/* naive: use a regex to scan the input for all occurrences of the strings we want to find */
-/* "better" create a parser */
+/* naive: use a regex to scan the input for all occurrences of the strings we want to find ?? */
+/* track (x,y) positions */
+
 
 type action =
   | DELIVER
