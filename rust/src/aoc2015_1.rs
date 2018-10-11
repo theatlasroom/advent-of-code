@@ -53,6 +53,11 @@ fn it_will_convert_instructions_into_enum_value() {
 
 #[test]
 fn it_will_correctly_compute_test_data() {
+    struct TestData {
+        input: String,
+        output: i32,
+    }
+
     let td = [
         TestData {
             input: String::from("(())"),
