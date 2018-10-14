@@ -2,7 +2,12 @@
 'use strict';
 
 
-var presentsDelivered = 0;
+function solve() {
+  return Promise.resolve(0);
+}
 
-exports.presentsDelivered = presentsDelivered;
+var total_deliveries = 0;
+
+exports.total_deliveries = total_deliveries;
+exports.solve = solve;
 /* No side effect */

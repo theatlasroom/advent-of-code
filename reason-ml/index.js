@@ -3,6 +3,8 @@ const fs = require('fs')
 // const path = require('path')
 const utils = require('../utils')
 const aoc2015_1 = require('./src/AOC2015_1.bs')
+const aoc2015_3 = require('./src/AOC2015_3.bs')
+// const aoc2015_4 = require('./src/AOC2015_4.bs')
 
 const problems = [
   {
@@ -10,6 +12,16 @@ const problems = [
     file: '2015_1.txt',
     solver: aoc2015_1,
   },
+  {
+    name: '2015 - 3',
+    file: '2015_3.txt',
+    solver: aoc2015_3,
+  },
+  // {
+  //   name: '2015 - 4',
+  //   file: '2015_4.txt',
+  //   solver: aoc2015_4,
+  // },
 ]
 
 const solve = async ({ name, file, solver }) => {

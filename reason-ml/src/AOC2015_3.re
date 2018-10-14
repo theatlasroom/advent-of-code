@@ -10,42 +10,56 @@
    ^>v< delivers presents to 4 houses in a square, including twice to the house at his starting/ending location.
    ^v^v^v^v^v delivers a bunch of presents to some very lucky children at only 2 houses. */
 
-/* naive: use a regex to scan the input for all occurrences of the strings we want to find ?? */
-/* track (x,y) positions */
-
-
-type action =
-  | DELIVER
-  | DELIVER_AND_MOVE
-  | MOVE;
+type move =
+  | NORTH
+  | EAST
+  | SOUTH
+  | WEST
+  | NONE;
 
 let total_deliveries: int = 0;
 
-/*
- string: Pattern to match
- int: # of presents delivered
-  */
-let patterns: list((string, int)) = [
-  (">", 2),
-  (">v<", 5),
-  ("^v^v^v^v^v", 2),
-];
+type house = {
+  x: int,
+  y: int,
+};
 
-Js.String.match_
+type deliveries = Set.make(house);
 
-let parse_regex = (pattern, text) => {
+type move_house = (move, house) => house;
+let move_house = (action, location) => {
+  let {x: curr_x, y: curr_y} = location;
+  switch (action) {
+  | NORTH => {x: curr_x, y: curr_y + 1}
+  | EAST => {x: curr_x, y: curr_y + 1}
+  | SOUTH => {x: curr_x, y: curr_y + 1}
+  | WEST => {x: curr_x, y: curr_y + 1}
+  };
+};
 
-}
+/* match an instruction */
+type match_instruction = string => move;
+let match_instruction = instruction =>
+  switch (instruction) {
+  | "^" => NORTH
+  | ">" => EAST
+  | "v" => SOUTH
+  | "<" => WEST
+  | _ => NONE
+  };
 
-type calculate_deliveries: string => int;
-let calculate_deliveries = input => {
-  List.map
-  let deliveries_made = List.map((pattern) => parse_regex(pattern, input)), patterns);
+/* let parse_regex = (pattern, text) => {
+
+   } */
+
+type calculate_deliveries = string => int;
+let calculate_deliveries = input =>
+  /* let deliveries_made = List.map((pattern) => parse_regex(pattern, input)), patterns); */
   /* reduce the deliveries and add  */
   /* total_deliveries = reduce(deliveries_made) */
-  /* total_deliveries + 1 */
-  0
-}
+  /* List.map */
+  0;
+/* total_deliveries + 1 */
 
 let solve = data =>
   Js.Promise.resolve(
