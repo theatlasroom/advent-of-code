@@ -15,7 +15,7 @@ type move =
   | EAST
   | SOUTH
   | WEST
-  | NONE;
+  | NOOP;
 
 let total_deliveries: int = 0;
 
@@ -24,16 +24,46 @@ type house = {
   y: int,
 };
 
-type deliveries = Set.make(house);
+module type Comparable = {
+  type t;
+  let equal: (t, t) => bool;
+};
+
+module MakeSet = (Item: Comparable) => {
+  /* let's use a list as our naive backing data structure */
+  type backingType = list(Item.t);
+  let empty = [];
+  let add = (currentSet: backingType, newItem: Item.t): backingType =>
+    /* if item exists */
+    if (List.exists(x => Item.equal(x, newItem), currentSet)) {
+      currentSet; /* return the same (immutable) set (a list really) */
+    } else {
+      [
+        newItem,
+        ...currentSet /* prepend to the set and return it */
+      ];
+    };
+};
+
+module House = {
+  type t = house;
+  let equal = (a, b) => a.x == b.x && a.y == b.y;
+  let create = (x, y) => {x, y};
+};
+
+/* create a custom set for our houses so we can properly model the unique houses delivered to */
+/* use the Set.Make functor */
+module HouseSet = MakeSet(House);
 
 type move_house = (move, house) => house;
 let move_house = (action, location) => {
   let {x: curr_x, y: curr_y} = location;
   switch (action) {
   | NORTH => {x: curr_x, y: curr_y + 1}
-  | EAST => {x: curr_x, y: curr_y + 1}
-  | SOUTH => {x: curr_x, y: curr_y + 1}
-  | WEST => {x: curr_x, y: curr_y + 1}
+  | EAST => {x: curr_x + 1, y: curr_y}
+  | SOUTH => {x: curr_x, y: curr_y - 1}
+  | WEST => {x: curr_x - 1, y: curr_y}
+  | NOOP => {x: curr_x, y: curr_y}
   };
 };
 
@@ -45,26 +75,52 @@ let match_instruction = instruction =>
   | ">" => EAST
   | "v" => SOUTH
   | "<" => WEST
-  | _ => NONE
+  | _ => NOOP
   };
 
-/* let parse_regex = (pattern, text) => {
+type next_delivery = (~instruction: string, ~location: house) => house;
+let next_delivery = (~instruction, ~location) => {
+  let action = match_instruction(instruction);
+  move_house(action, location);
+};
 
-   } */
+type deliver_presents =
+  (
+    ~deliveries_made: list(House.t),
+    ~instructions: string,
+    ~index: int,
+    ~location: house
+  ) =>
+  list(House.t);
+let rec deliver_presents =
+        (~deliveries_made, ~instructions, ~index, ~location) =>
+  if (index < String.length(instructions)) {
+    let instruction = String.make(1, instructions.[index]);
+    let next_location = next_delivery(~instruction, ~location);
+    let deliveries_made = HouseSet.add(deliveries_made, next_location);
+    deliver_presents(
+      ~deliveries_made,
+      ~instructions,
+      ~index=index + 1,
+      ~location=next_location,
+    );
+  } else {
+    deliveries_made;
+  };
 
-type calculate_deliveries = string => int;
-let calculate_deliveries = input =>
-  /* let deliveries_made = List.map((pattern) => parse_regex(pattern, input)), patterns); */
-  /* reduce the deliveries and add  */
-  /* total_deliveries = reduce(deliveries_made) */
-  /* List.map */
-  0;
-/* total_deliveries + 1 */
-
+/* convert the data string into a list, use destructuring to 'pop' elements off the list */
 let solve = data =>
   Js.Promise.resolve(
     {
-      let result = calculate_deliveries();
-      result;
+      let deliveries_made = HouseSet.(empty);
+
+      let result =
+        deliver_presents(
+          ~deliveries_made,
+          ~instructions=data,
+          ~index=0,
+          ~location={x: 0, y: 0},
+        );
+      result |> List.length;
     },
   );
