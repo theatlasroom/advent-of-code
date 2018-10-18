@@ -1,8 +1,12 @@
-mod utils;
 mod aoc2015_1;
 mod aoc2015_2;
+mod aoc2015_4;
+mod utils;
 
-fn banner(){
+extern crate md5;
+extern crate regex;
+
+fn banner() {
     println!("****************************************************************");
     println!("⚡️🎉 Advent of Code solutions 🎉⚡️");
     println!("\nLanguage: Rust ⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️");
@@ -10,7 +14,7 @@ fn banner(){
     println!("****************************************************************");
 }
 
-fn closing_banner(){
+fn closing_banner() {
     println!("****************************************************************");
     println!("🎉🎉🎉 Fin 🎉🎉🎉");
     println!("****************************************************************");
@@ -21,6 +25,7 @@ fn main() {
     println!("\n2015");
     println!("Puzzle 1: {}", aoc2015_1::solve());
     println!("Puzzle 2: {}", aoc2015_2::solve());
+    println!("Puzzle 4: {}", aoc2015_4::solve());
     println!("\n");
     closing_banner();
 }
