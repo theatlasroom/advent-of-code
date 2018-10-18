@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 // Santa needs help mining some AdventCoins (very similar to bitcoins) to use as gifts for all the economically forward-thinking little girls and boys.
 
 // To do this, he needs to find MD5 hashes which, in hexadecimal, start with at least five zeroes. The input to the MD5 hash is some secret key (your puzzle input, given below) followed by a number in decimal. To mine AdventCoins, you must find Santa the lowest positive number (no leading zeroes: 1, 2, 3, ...) that produces such a hash.
@@ -36,12 +37,12 @@ fn it_will_validate_correct_hashes() {
 }
 
 fn calculate_first_hash(input: &str) -> i32 {
-  println!("calculate_first_hash for {:?}", input);
+  // println!("calculate_first_hash for {:?}", input);
   let mut seed = 0;
   loop {
     let digest = md5::compute([String::from(input), seed.to_string()].join(""));
     let hash = format!("{:x}", digest);
-    println!("seed: {:?} digest: {:?}", seed, digest);
+    // println!("seed: {:?} digest: {:?}", seed, digest);
     if is_valid_adventcoin_hash(&hash) {
       break;
     }
