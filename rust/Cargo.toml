@@ -4,3 +4,5 @@ version = "0.1.0"
 authors = ["Ezekiel Kigbo <theatlasroom@gmail.com>"]
 
 [dependencies]
+md5 = "0.5.0"
+regex = "1"
