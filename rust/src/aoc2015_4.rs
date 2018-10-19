@@ -12,14 +12,22 @@ use md5;
 use regex::Regex;
 use utils;
 
-fn is_valid_adventcoin_hash(s: &str) -> bool {
-  let re = Regex::new(r"^00000[A-Fa-f0-9]{27}$").unwrap();
+enum AdventCodePattern {
+  One,
+  Two,
+}
+
+fn is_valid_adventcoin_hash(pattern: &AdventCodePattern, s: &str) -> bool {
+  let re = match pattern {
+    AdventCodePattern::One => Regex::new(r"^00000[A-Fa-f0-9]{27}$").unwrap(),
+    AdventCodePattern::Two => Regex::new(r"^000000[A-Fa-f0-9]{26}$").unwrap(),
+  };
   re.is_match(s)
 }
 
 #[test]
 fn it_will_validate_correct_hashes() {
-  let cases = [
+  let cases_one = [
     ("48fbdf1af6eb206e65ef98bf8a78ad85", false),
     ("ab1cf84209ffe088ac7822af3eb8b533", false),
     ("a00001dbbfa3a5c83a2d506429c7b00e", false),
@@ -29,21 +37,37 @@ fn it_will_validate_correct_hashes() {
     ("000006136ef2ff3b291c85725f17325c", true),
   ];
 
-  for elem in cases.iter() {
+  for elem in cases_one.iter() {
     let (input, result) = elem;
-    let computed = &is_valid_adventcoin_hash(&input);
+    let computed = &is_valid_adventcoin_hash(&AdventCodePattern::One, &input);
+    assert_eq!(computed, result);
+  }
+
+  let cases_two = [
+    ("48fbdf1af6eb206e65ef98bf8a78ad85", false),
+    ("ab1cf84209ffe088ac7822af3eb8b533", false),
+    ("a00001dbbfa3a5c83a2d506429c7b00e", false),
+    ("", false),
+    ("00000XXXXXXXXXX", false), // should be 32 digits long
+    ("000001dbbfa3a5c83a2d506429c7b00e", false),
+    ("0000006136ef2ff3b291c85725f1732c", true),
+  ];
+
+  for elem in cases_two.iter() {
+    let (input, result) = elem;
+    let computed = &is_valid_adventcoin_hash(&AdventCodePattern::Two, &input);
     assert_eq!(computed, result);
   }
 }
 
-fn calculate_first_hash(input: &str) -> i32 {
+fn calculate_first_hash(pattern: &AdventCodePattern, input: &str) -> i32 {
   // println!("calculate_first_hash for {:?}", input);
   let mut seed = 0;
   loop {
     let digest = md5::compute([String::from(input), seed.to_string()].join(""));
     let hash = format!("{:x}", digest);
     // println!("seed: {:?} digest: {:?}", seed, digest);
-    if is_valid_adventcoin_hash(&hash) {
+    if is_valid_adventcoin_hash(&pattern, &hash) {
       break;
     }
     seed += 1;
@@ -63,12 +87,24 @@ fn calculate_first_hash(input: &str) -> i32 {
 //   }
 // }
 
+fn part_one(data: &str) -> i32 {
+  calculate_first_hash(&AdventCodePattern::One, &data.trim())
+}
+
+fn part_two(data: &str) -> i32 {
+  calculate_first_hash(&AdventCodePattern::Two, &data.trim())
+}
+
 pub fn solve() -> String {
   let data = utils::read_file("../data/2015_4.txt");
-  let first_hash = calculate_first_hash(&data.trim());
+  let result_one = part_one(&data);
+  let result_two = part_two(&data);
   format!(
-    "{:?} produces our valid AdventCoin for input {:?}",
-    first_hash,
-    &data.trim()
+    "{:?} produces our valid AdventCoin for input {:?} with 5 leading 0's
+     \n{:?} produces our valid AdventCoin for input {:?} with 6 leading 0's",
+    result_one,
+    &data.trim(),
+    result_two,
+    &data.trim(),
   )
 }
