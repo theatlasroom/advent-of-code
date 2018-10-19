@@ -28,7 +28,7 @@ fn main() {
     println!("Puzzle 2: {}", aoc2015_2::solve());
     println!("Puzzle 3: {}", aoc2015_3::solve());
     // ignored because its really slow to run
-    // println!("Puzzle 4: {}", aoc2015_4::solve());
+    println!("Puzzle 4: {}", aoc2015_4::solve());
     println!("\n");
     closing_banner();
 }
