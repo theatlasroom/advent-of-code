@@ -11,7 +11,7 @@ fn banner() {
     println!("****************************************************************");
     println!("⚡️🎉 Advent of Code solutions 🎉⚡️");
     println!("\nLanguage: Rust ⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️");
-    println!("\nThis is an attempt at solutions to the problems using reasonml,\nthis is purely as a exercise in learning reason, so i am sure \nthe solutions are not \"optimal\"");
+    println!("\nThis is an attempt at solutions to the problems using rust,\nthis is purely as a exercise in learning rust, so i am sure \nthe solutions are not \"optimal\"");
     println!("****************************************************************");
 }
 
