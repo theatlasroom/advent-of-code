@@ -49,7 +49,7 @@ impl LightGrid {
         }
     }
 
-    fn items(self) -> Vec<Light>{
+    fn items(self) -> Vec<Light> {
         self.lights
     }
 }
@@ -66,9 +66,9 @@ fn will_fill_the_grid_with_lights_in_default_state() {
 
     &grid.fill();
     // iterate over each item in the grid and check the position + the light status
-    for i in grid.items().iter(){
-        println!("{:?}", i);
-        assert_eq!(false, i.is_lit()); 
+    for i in grid.items().iter() {
+        // println!("{:?}", i);
+        assert_eq!(false, i.is_lit());
     }
 }
 
