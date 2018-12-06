@@ -28,7 +28,7 @@ fn closing_banner() {
 
 fn main() {
     banner();
-    println!("\n2015");
+    println!("\n2015 - 🎄🎄🎄🎄🎄🎄🎄🎄🎄");
     println!("Puzzle 1: {}", aoc2015_1::solve());
     println!("Puzzle 2: {}", aoc2015_2::solve());
     println!("Puzzle 3: {}", aoc2015_3::solve());
@@ -36,8 +36,7 @@ fn main() {
     // println!("Puzzle 4: {}", aoc2015_4::solve());
     // println!("Puzzle 5: {}", aoc2015_5::solve());
     println!("Puzzle 6: {}", aoc2015_6::solve());
-    println!("\n");
-    println!("\n2018");
+    println!("\n2018 - 🎄🎄🎄🎄🎄🎄🎄🎄🎄");
     println!("Puzzle 1: {}", aoc2018_1::solve());
 
     println!("\n");
