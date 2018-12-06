@@ -1,14 +1,15 @@
 use regex::Regex;
+use std::collections::HashSet;
 use utils;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum FrequencyChange {
   Plus,
   Minus,
   Noop,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct Instruction {
   operator: FrequencyChange,
   amount: i32,
@@ -78,11 +79,30 @@ fn extract_instructions(lines: &str) -> Vec<Instruction> {
 fn calculate_resulting_frequency(instructions: &Vec<Instruction>, initial: i32) -> i32 {
   instructions
     .iter()
-    .fold(initial, |acc, i| match i.operator {
-      FrequencyChange::Plus => acc + i.amount,
-      FrequencyChange::Minus => acc - i.amount,
-      _ => acc,
-    })
+    .fold(initial, |acc, i| compute_next_freq(&i, acc))
+}
+
+fn compute_next_freq(i: &Instruction, freq: i32) -> i32 {
+  match i.operator {
+    FrequencyChange::Plus => freq + i.amount,
+    FrequencyChange::Minus => freq - i.amount,
+    _ => freq,
+  }
+}
+
+fn find_first_duplicate_frequency(instructions: &Vec<Instruction>, initial: i32) -> i32 {
+  let mut set = HashSet::new();
+  let mut freq = initial;
+  let mut counter = 0;
+  let len = instructions.len() - 1;
+  loop {
+    // returns false if the insertion fails (ie item already exists)
+    if !set.insert(freq) {
+      break freq;
+    }
+    freq = compute_next_freq(&instructions[counter], freq);
+    counter = if counter < len { counter + 1 } else { 0 };
+  }
 }
 
 #[test]
@@ -109,5 +129,9 @@ pub fn solve() -> String {
   let data = utils::read_file("../data/2018_1.txt");
   let instructions = extract_instructions(&data);
   let resulting_frequency = calculate_resulting_frequency(&instructions, 0);
-  format!("{:?} Final frequency", resulting_frequency)
+  let first_repeat = find_first_duplicate_frequency(&instructions, 0);
+  format!(
+    "{:?} Final frequency, {:?} First repeated frequency",
+    resulting_frequency, first_repeat
+  )
 }
