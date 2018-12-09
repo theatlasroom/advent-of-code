@@ -47,16 +47,38 @@ function calculate_checksum(data) {
         }), /* record */[
         /* two */0,
         /* three */0
-      ], List.map(sum_repeated_characters_in_string, Utils.Utils[/* str_to_list */0](undefined, data)));
+      ], List.map(sum_repeated_characters_in_string, data));
   return Caml_int32.imul(counts[/* two */0], counts[/* three */1]);
 }
 
+function is_similar_string(source, target) {
+  var sl = Utils.Utils[/* str_to_list */0]("", source);
+  var tl = Utils.Utils[/* str_to_list */0]("", target);
+  var l = List.map2((function (s, t) {
+          return s === t;
+        }), sl, tl);
+  return List.length(List.filter((function (i) {
+                      return !i;
+                    }))(l)) <= 1;
+}
+
+function find_boxes_with_prototype_fabric() {
+  return "abc";
+}
+
 function solve(input) {
-  return Promise.resolve(calculate_checksum(input));
+  var data = Utils.Utils[/* str_to_list */0](undefined, input);
+  var checksum = calculate_checksum(data);
+  return Promise.resolve(/* tuple */[
+              checksum,
+              "abc"
+            ]);
 }
 
 exports.count_occurrences = count_occurrences;
 exports.sum_repeated_characters_in_string = sum_repeated_characters_in_string;
 exports.calculate_checksum = calculate_checksum;
+exports.is_similar_string = is_similar_string;
+exports.find_boxes_with_prototype_fabric = find_boxes_with_prototype_fabric;
 exports.solve = solve;
 /* No side effect */
