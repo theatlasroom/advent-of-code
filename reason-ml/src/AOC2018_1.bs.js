@@ -2,19 +2,14 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
+var Utils = require("./Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Hashtbl = require("bs-platform/lib/js/hashtbl.js");
 var Caml_format = require("bs-platform/lib/js/caml_format.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
-function str_to_list($staropt$star, input) {
-  var delimiter = $staropt$star !== undefined ? $staropt$star : "\n";
-  return $$Array.to_list(input.trim().split(delimiter));
-}
-
 function match_instruction(input) {
-  var charlist = str_to_list("", input);
+  var charlist = Utils.Utils[/* str_to_list */0]("", input);
   if (charlist) {
     var match = charlist[0] === "+";
     var action = match ? /* INC */0 : /* DEC */1;
@@ -84,7 +79,7 @@ function first_repeated_frequency(_curr_freq, _curr_index, data, freq_table) {
 }
 
 function solve(input) {
-  var data = str_to_list("\n", input);
+  var data = Utils.Utils[/* str_to_list */0]("\n", input);
   var resulting_frequency = calibrate(data, 0);
   var initial_size = (List.length(data) << 1);
   var repeated_frequency = first_repeated_frequency(0, 0, data, Hashtbl.create(undefined, initial_size));
@@ -94,7 +89,6 @@ function solve(input) {
             ]);
 }
 
-exports.str_to_list = str_to_list;
 exports.match_instruction = match_instruction;
 exports.calculate_next_value = calculate_next_value;
 exports.calibrate = calibrate;

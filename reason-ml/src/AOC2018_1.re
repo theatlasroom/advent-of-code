@@ -1,3 +1,5 @@
+open Utils;
+
 type action =
   | INC
   | DEC
@@ -8,13 +10,9 @@ type instruction = {
   amount: int,
 };
 
-type str_to_list = (string, string) => list(string);
-let str_to_list = (~delimiter="\n", ~input) =>
-  Js.String.split(delimiter, Js.String.trim(input)) |> Array.to_list;
-
 type match_instruction = string => instruction;
 let match_instruction = input => {
-  let charlist = str_to_list(~input, ~delimiter="");
+  let charlist = Utils.str_to_list(~delimiter="", input);
   switch (charlist) {
   | [] => {action: NOOP, amount: 0}
   | [act, ...value] =>
@@ -74,7 +72,7 @@ let rec first_repeated_frequency =
 let solve = (input: string) =>
   Js.Promise.resolve(
     {
-      let data = str_to_list(~input, ~delimiter="\n");
+      let data = input |> Utils.str_to_list(~delimiter="\n");
       let resulting_frequency = calibrate(~data, ~result=0);
       let initial_size = 2 * List.length(data);
       let repeated_frequency =
