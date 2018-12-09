@@ -2,37 +2,35 @@
 const fs = require('fs')
 // const path = require('path')
 const utils = require('../utils')
-const aoc2015_1 = require('./src/AOC2015_1.bs')
-const aoc2015_2 = require('./src/AOC2015_2.bs')
-const aoc2015_3 = require('./src/AOC2015_3.bs')
-// const aoc2015_4 = require('./src/AOC2015_4.bs')
 
 const problems = [
   {
-    name: '2015 - 1',
-    file: '2015_1.txt',
-    solver: aoc2015_1,
+    year: 2015,
+    day: 1,
   },
   {
-    name: '2015 - 2',
-    file: '2015_2.txt',
-    solver: aoc2015_2,
+    year: 2015,
+    day: 2,
   },
   {
-    name: '2015 - 3',
-    file: '2015_3.txt',
-    solver: aoc2015_3,
+    year: 2015,
+    day: 3,
   },
-  // {
-  //   name: '2015 - 4',
-  //   file: '2015_4.txt',
-  //   solver: aoc2015_4,
-  // },
+  {
+    year: 2015,
+    day: 4,
+  },
+  {
+    year: 2018,
+    day: 1,
+  },
 ]
 
-const solve = async ({ name, file, solver }) => {
-  console.log(`\nProblem ${name}`)
-  const data = await utils.readData(file)
+const solve = async ({ year, day, file }) => {
+  console.log(`\nProblem ${year} - ${day}`)
+  const solver = require(`./src/AOC${year}_${day}.bs`)
+  const dataFile = `${year}_${day}.txt`
+  const data = await utils.readData(dataFile)
   const result = await solver.solve(data)
   console.log(`Answer: ${result} 🔥\n`)
 }

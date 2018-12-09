@@ -34,13 +34,6 @@ let rec calculate_floor = (~data, ~floor, ~index) => {
 exception UnknownError(string);
 
 let solve = data =>
-  /* Js.Promise.make((~resolve, ~reject) => {
-       let result = calculate_floor(~floor=0, ~data, ~index=0);
-       switch (result) {
-       | Some(data) => resolve(. data)
-       | None => reject(. UnknownError("Something went wrong"))
-       };
-     }); */
   Js.Promise.resolve(
     {
       let result = calculate_floor(~floor=0, ~data, ~index=0);
