@@ -13,9 +13,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "bs-platform": "^4.0.5"
+    "bs-platform": "^5.0.6"
   },
   "dependencies": {
-    "prettier": "^1.14.3"
+    "prettier": "^1.18.2"
   }
 }
