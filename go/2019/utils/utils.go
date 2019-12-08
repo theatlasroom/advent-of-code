@@ -13,6 +13,7 @@ func check(e error) {
     }
 }
 
+// LoadData reads each line of input into a string array
 func LoadData(filename string) []string {
 	data := []string{}
 
@@ -27,4 +28,11 @@ func LoadData(filename string) []string {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
 	}
 	return data
+}
+
+// Banner prints a text heading for the day specified
+func Banner(day int) {
+	fmt.Println("==============================")
+	fmt.Printf(" Advent of code 2019 - Day %v\n", day)
+	fmt.Println("==============================")
 }

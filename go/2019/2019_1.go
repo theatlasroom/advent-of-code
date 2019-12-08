@@ -82,12 +82,13 @@ func main() {
 	var fuel, fuelSum float64
 	data := utils.LoadData("1.txt")
 	
+	utils.Banner(1)
+
 	for _, str := range data {
 		mass, _ := strconv.ParseFloat(str, 64)
 		fuel += calculateFuel(mass)
 		fuelSum += sumOfFuel(mass)
 	}
-
 	fmt.Println("Fuel required", int(fuel))
 	fmt.Println("Sum of fuel required", int(fuelSum))
 }
