@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./utils"
 	"fmt"
+	"github.com/theatlasroom/advent-of-code/go/2019/utils"
 	"math"
 	"strconv"
 )
@@ -50,7 +50,7 @@ So, for each module mass, calculate its fuel and add it to the total. Then, trea
     At first, a module of mass 1969 requires 654 fuel. Then, this fuel requires 216 more fuel (654 / 3 - 2). 216 then requires 70 more fuel, which requires 21 fuel, which requires 5 fuel, which requires no further fuel. So, the total fuel required for a module of mass 1969 is 654 + 216 + 70 + 21 + 5 = 966.
     The fuel required by a module of mass 100756 and its fuel is: 33583 + 11192 + 3728 + 1240 + 411 + 135 + 43 + 12 + 2 = 50346.
 
-What is the sum of the fuel requirements for all of the modules on your spacecraft when also taking into account the mass of the added fuel? 
+What is the sum of the fuel requirements for all of the modules on your spacecraft when also taking into account the mass of the added fuel?
 (Calculate the fuel requirements for each module separately, then add them all up at the end.)
 
 */
@@ -59,7 +59,7 @@ const divisor = 3
 const offset = 2
 
 func hasFuel(mass float64) bool {
-	return (mass - divisor - offset) > 0	
+	return (mass - divisor - offset) > 0
 }
 
 func calculateFuel(mass float64) float64 {
@@ -81,7 +81,7 @@ func sumOfFuel(mass float64) float64 {
 func main() {
 	var fuel, fuelSum float64
 	data := utils.LoadData("1.txt")
-	
+
 	utils.Banner(1)
 
 	for _, str := range data {
