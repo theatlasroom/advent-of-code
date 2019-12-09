@@ -25,3 +25,10 @@ $ node 2015_5 2015_5.txt
 $ cd reason-ml
 $ yarn start # or `npm run start`
 ```
+
+## [Go](./go)
+
+```
+$ cd go/<year>
+$ go run <year>_<day>.go
+```
