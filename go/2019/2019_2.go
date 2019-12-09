@@ -1,6 +1,10 @@
 package main
 
-import "github.com/theatlasroom/advent-of-code/go/2019/intcode"
+import (
+    "fmt"
+	"github.com/theatlasroom/advent-of-code/go/2019/intcode"
+	"github.com/theatlasroom/advent-of-code/go/2019/utils"
+)
 
 /**
 --- Day 2: 1202 Program Alarm ---
@@ -57,5 +61,10 @@ Once you have a working computer, the first step is to restore the gravity assis
 */
 
 func main() {
+	input := utils.LoadDataAsString("2.txt")
 
+	program := utils.StrToIntArr(input)
+
+	nextProgram := intcode.ComputeNextProgram(program)
+	fmt.Println("Result:\n", nextProgram)
 }
