@@ -24,6 +24,11 @@ func ComputeNextProgram(program []int) []int {
 	copy(np, program)
 
 	for !halted && !eof {
+		if position >= len(program) {
+			eof = true
+			break
+		}
+
 		if np[position] != OcHALT {
 			instruction := Intcode{
 				opcode: np[position],
@@ -37,13 +42,6 @@ func ComputeNextProgram(program []int) []int {
 		} else {
 			halted = true
 			break
-		}
-
-		if position >= len(program) {
-			eof = true
-		}
-		if position >= len(program) {
-			eof = true
 		}
 	}
 	return np
