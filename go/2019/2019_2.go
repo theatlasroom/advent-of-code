@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/theatlasroom/advent-of-code/go/2019/intcode"
 	"github.com/theatlasroom/advent-of-code/go/2019/utils"
 )
