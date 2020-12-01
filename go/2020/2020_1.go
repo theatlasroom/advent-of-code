@@ -46,9 +46,25 @@ type pair struct {
 	a, b int
 }
 
+func (p pair) Product() int {
+	return p.a * p.b
+}
+
+func (p pair) toString() string {
+	return fmt.Sprintf("%v %v %v", p.a, p.b, p.Product())
+}
+
 type triplet struct {
 	pair // embeds the pair struct
 	c    int
+}
+
+func (t triplet) Product() int {
+	return t.a * t.b * t.c
+}
+
+func (t triplet) toString() string {
+	return fmt.Sprintf("%v %v %v %v", t.a, t.b, t.c, t.Product())
 }
 
 func equalPairs(a int, asc []int) (int, bool) {
@@ -88,15 +104,15 @@ func findPairsLessThanTarget(asc, desc []int) []pair {
 	return pairs
 }
 
-func part1(asc, desc []int) (int, int, int) {
+func part1(asc, desc []int) pair {
 	p, err := findPairsEqualToTarget(asc, desc)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return p.a, p.b, p.a * p.b
+	return p
 }
 
-func part2(asc, desc []int) (int, int, int, int) {
+func part2(asc, desc []int) triplet {
 	p := findPairsLessThanTarget(asc, desc)
 	var t triplet
 	for _, pv := range p {
@@ -108,15 +124,14 @@ func part2(asc, desc []int) (int, int, int, int) {
 		c, ok := equalPairs(curr, asc)
 
 		if ok {
-			t = triplet{pv, c}
-			break
+			return triplet{pv, c}
 		}
 	}
 
 	if t == (triplet{}) {
 		log.Fatal(errors.New("No matching values"))
 	}
-	return t.a, t.b, t.c, t.a * t.b * t.c
+	return t
 }
 
 func main() {
@@ -131,6 +146,6 @@ func main() {
 	desc := sort.IntSlice(append([]int(nil), data...))
 	sort.Sort(sort.Reverse(desc))
 
-	fmt.Println(part1(data, desc))
-	fmt.Println(part2(data, desc))
+	fmt.Println(part1(data, desc).toString())
+	fmt.Println(part2(data, desc).toString())
 }
