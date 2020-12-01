@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"sort"
 
 	"github.com/theatlasroom/advent-of-code/go/2020/utils"
@@ -39,46 +40,97 @@ In this list, the two entries that sum to 2020 are 1721 and 299. Multiplying the
 Of course, your expense report is much larger. Find the two entries that sum to 2020; what do you get if you multiply them together?
 **/
 
-// func isCandidate() {}
-
 const target = 2020
 
-func getValues(asc, desc []int) (int, int, error) {
+type pair struct {
+	a, b int
+}
+
+type triplet struct {
+	pair // embeds the pair struct
+	c    int
+}
+
+func equalPairs(a int, asc []int) (int, bool) {
+	for _, b := range asc {
+		sum := a + b
+		if sum > target {
+			break
+		}
+		if sum == target {
+			return b, true
+		}
+	}
+	return 0, false
+}
+
+func findPairsEqualToTarget(asc, desc []int) (pair, error) {
+	for _, a := range desc {
+		b, ok := equalPairs(a, asc)
+		if ok {
+			return pair{a, b}, nil
+		}
+	}
+	return pair{}, errors.New("No matching values")
+}
+
+func findPairsLessThanTarget(asc, desc []int) []pair {
+	var pairs []pair
 	for _, a := range desc {
 		for _, b := range asc {
 			sum := a + b
-			fmt.Printf("\na %v b %v sum %v", a, b, sum)
-			if sum == target {
-				return a, b, nil
-			}
-			if sum > target {
+			if sum >= target {
 				break
 			}
+			pairs = append(pairs, pair{a, b})
 		}
 	}
-	return 0, 0, errors.New("No matching values")
+	return pairs
 }
 
-func compute(data []int) int {
-	sort.Ints(data)
+func part1(asc, desc []int) (int, int, int) {
+	p, err := findPairsEqualToTarget(asc, desc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return p.a, p.b, p.a * p.b
+}
 
-	// gross
-	desc := sort.IntSlice(data)
-	sort.Sort(sort.Reverse(desc))
-	fmt.Println(data)
-	fmt.Println(desc)
+func part2(asc, desc []int) (int, int, int, int) {
+	p := findPairsLessThanTarget(asc, desc)
+	var t triplet
+	for _, pv := range p {
+		curr := pv.a + pv.b
+		if curr >= target {
+			continue
+		}
 
-	// a, b, err := getValues(data, desc)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// return a * b
+		c, ok := equalPairs(curr, asc)
+
+		if ok {
+			t = triplet{pv, c}
+			break
+		}
+	}
+
+	if t == (triplet{}) {
+		log.Fatal(errors.New("No matching values"))
+	}
+	return t.a, t.b, t.c, t.a * t.b * t.c
 }
 
 func main() {
 	// Read all the numbers
+	utils.Banner(1)
 	input := utils.LoadDataAsString("1.txt")
 
-	program := utils.StrToIntArr(input)
-	compute(program)
+	data := utils.StrToIntArr(input)
+
+	// gross
+	sort.Ints(data)
+	desc := sort.IntSlice(append([]int(nil), data...))
+	sort.Sort(sort.Reverse(desc))
+
+	fmt.Println(part1(data, desc))
+	fmt.Println(part2(data, desc))
 }
