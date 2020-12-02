@@ -72,7 +72,9 @@ func extractPolicies(data []string) []policy {
 	return policies
 }
 
-func (p policy) isValid() bool {
+type validatorFn = func(policy) bool
+
+func isValidRentalRule(p policy) bool {
 	tally := 0
 	for _, c := range p.password {
 		if string(c) == p.character {
@@ -85,10 +87,19 @@ func (p policy) isValid() bool {
 	return false
 }
 
-func findValidPasswords(policies []policy) int {
+func isValidTobogganRule(p policy) bool {
+	x := string(p.password[p.min-1]) == p.character
+	y := string(p.password[p.max-1]) == p.character
+	if (x || y) && !(x && y) {
+		return true
+	}
+	return false
+}
+
+func findValidPasswords(policies []policy, validator validatorFn) int {
 	tally := 0
 	for _, p := range policies {
-		if p.isValid() {
+		if validator(p) {
 			tally++
 		}
 	}
@@ -100,5 +111,6 @@ func main() {
 	data := utils.LoadData("2.txt")
 
 	policies := extractPolicies(data)
-	fmt.Printf("%d valid passwords\n", findValidPasswords(policies))
+	fmt.Printf("%d valid rental passwords\n", findValidPasswords(policies, isValidRentalRule))
+	fmt.Printf("%d valid toboggan passwords\n", findValidPasswords(policies, isValidTobogganRule))
 }
