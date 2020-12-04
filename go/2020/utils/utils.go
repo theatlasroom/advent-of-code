@@ -33,7 +33,7 @@ func LoadData(filename string) []string {
 	return data
 }
 
-// LoadDataAsString reads each line of input into a string array
+// LoadDataAsString reads each line of input into a single string
 func LoadDataAsString(filename string) string {
 	buf, err := ioutil.ReadFile(fmt.Sprintf("data/%s", filename))
 	CheckAndPanic(err)

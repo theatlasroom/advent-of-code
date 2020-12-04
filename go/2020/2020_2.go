@@ -51,8 +51,11 @@ func newPolicy(input string) policy {
 	str := re.FindStringSubmatch(input)
 	minStr, maxStr, character, password := str[1], str[2], str[3], str[4]
 
-	min, _ := strconv.Atoi(minStr)
-	max, _ := strconv.Atoi(maxStr)
+	min, err := strconv.Atoi(minStr)
+	utils.CheckAndPanic(err)
+
+	max, err := strconv.Atoi(maxStr)
+	utils.CheckAndPanic(err)
 
 	return policy{
 		rule{
