@@ -92,7 +92,8 @@ var slopes coordArr = []coords{
 }
 
 func (c *coords) move(x, y int) {
-	c.x, c.y = c.x+x, c.y+y
+	c.moveX(x)
+	c.moveY(y)
 }
 
 func (c *coords) moveX(x int) {
