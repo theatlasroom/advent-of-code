@@ -81,6 +81,16 @@ type coords struct {
 	x, y int
 }
 
+type coordArr = []coords
+
+var slopes coordArr = []coords{
+	coords{1, 1},
+	coords{3, 1},
+	coords{5, 1},
+	coords{7, 1},
+	coords{1, 2},
+}
+
 func (c *coords) move(x, y int) {
 	c.x, c.y = c.x+x, c.y+y
 }
@@ -104,7 +114,6 @@ func newCoords() coords {
 func collision(xPos int, treeMap []int) bool {
 	clampPosition := xPos % patternLength
 	for _, pos := range treeMap {
-		// fmt.Printf("\nxPos %v clamped %v pos %v mod", xPos, clampPosition, pos, xPos%patternLength)
 		if clampPosition == pos {
 			return true
 		}
@@ -112,18 +121,31 @@ func collision(xPos int, treeMap []int) bool {
 	return false
 }
 
-func p202031(trees treeLocations) int {
+func p202031(offset coords, trees treeLocations) int {
 	count := 0
 	p := newCoords()
 
-	p.move(xInc, yInc)
+	p.move(offset.x, offset.y)
 	for p.y < len(trees) {
 		if collision(p.x, trees[p.y]) {
 			count++
 		}
-		p.move(xInc, yInc)
+		p.move(offset.x, offset.y)
 	}
 	return count
+}
+
+func p202032(trees treeLocations) ([]int, int) {
+	var counts []int
+	for _, offset := range slopes {
+		counts = append(counts, p202031(offset, trees))
+	}
+
+	total := 1
+	for _, c := range counts {
+		total *= c
+	}
+	return counts, total
 }
 
 func main() {
@@ -141,10 +163,7 @@ func main() {
 		trees[i] = t
 	}
 
-	fmt.Println("Collisions:", p202031(trees))
-
-	// create a 2d array of lines (index is the line number, value is the index of tree positions)
-	// Start at the starting index
-	// Increment the coordinates accordingly
-	// Check if the current position has a tree (patterns are 32 squares long, so we can mod that)
+	fmt.Println("Collisions:", p202031(coords{3, 1}, trees))
+	counts, product := p202032(trees)
+	fmt.Println("Collisions:", counts, product)
 }
