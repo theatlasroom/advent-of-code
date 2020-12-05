@@ -86,6 +86,22 @@ var (
 	hcl = regexp.MustCompile(`hcl:(\S*)`)
 )
 
+// validation rules for each field
+var (
+	cidValid = regexp.MustCompile(`cid:(\S*)`)                // ignore
+	pidValid = regexp.MustCompile(`pid:(\d{9})\b`)            // a nine-digit number, including leading zeroes.
+	byrValid = regexp.MustCompile(`byr:(19[2-9]\d|200[0-2])`) // four digits; at least 1920 and at most 2002.
+	iyrValid = regexp.MustCompile(`iyr:(201\d|2020)`)         // four digits; at least 2010 and at most 2020.
+	eyrValid = regexp.MustCompile(`eyr:(202\d|2030)`)         // four digits; at least 2020 and at most 2030.
+	// Height:
+	// - a number followed by either cm or in:
+	// - If cm, the number must be at least 150 and at most 193.
+	// - If in, the number must be at least 59 and at most 76.
+	hgtValid = regexp.MustCompile(`hgt:((59|6\d|7[0-6])in|(1[5-8]\d|19[0-3])cm)`)
+	eclValid = regexp.MustCompile(`ecl:(amb|blu|brn|gry|grn|hzl|oth)`) // exactly one of: amb blu brn gry grn hzl oth.
+	hclValid = regexp.MustCompile(`hcl:(#[\da-f]{6})`)                 // a # followed by exactly six characters 0-9 or a-f
+)
+
 func (p passport) toString() string {
 	return fmt.Sprintf(
 		"pid: %v, cid: %v, byr: %v, iyr: %v, eyr: %v, hgt: %v, ecl: %v, hcl: %v",
@@ -93,12 +109,13 @@ func (p passport) toString() string {
 	)
 }
 
-func (p passport) checkFieldPresence() (bool, string) {
+func (p passport) hasAllRequiredFields() (bool, string) {
 	e := reflect.ValueOf(&p).Elem()
 	// iterate through all the fields and validate them
 	for i := 0; i < e.NumField(); i++ {
 		v := e.Field(i).Interface()
-		if e.Type().Field(i).Name == "CountryID" {
+		field := e.Type().Field(i).Name
+		if field == "CountryID" {
 			continue
 		}
 
@@ -106,12 +123,16 @@ func (p passport) checkFieldPresence() (bool, string) {
 		case int:
 			vi, ok := v.(int)
 			if !ok || vi < 0 {
-				return false, fmt.Sprintf("invalid field %v", e.Type().Field(i).Name)
+				return false, ""
+				// return false, fmt.Sprintf("invalid field %v value %v", field, vi)
 			}
 		case string:
 			vs, ok := v.(string)
 			if !ok || len(vs) < 1 {
-				return false, fmt.Sprintf("invalid field %v", e.Type().Field(i).Name)
+				if field == "EyeColour" {
+					return false, fmt.Sprintf("invalid field %v value %v", field, vs)
+				}
+				return false, ""
 			}
 		default:
 			log.Fatal("Unknown type for field %v", v)
@@ -129,6 +150,9 @@ func (v passportRule) extractData() string {
 	res := v.re.FindStringSubmatch(v.input)
 	if len(res) > 1 {
 		return res[1]
+	}
+	if len(res) > 2 {
+		fmt.Printf("input %v matches %v\n", v.input, res)
 	}
 	return ""
 }
@@ -168,6 +192,30 @@ func newPassport(input string) passport {
 	}
 }
 
+func newValidPassport(input string) (passport, string) {
+	pidValue := extractStringOrDefault(passportRule{input, pidValid})
+	cidValue := extractIntOrDefault(passportRule{input, cidValid})
+	byrValue := extractIntOrDefault(passportRule{input, byrValid})
+	iyrValue := extractIntOrDefault(passportRule{input, iyrValid})
+	eyrValue := extractIntOrDefault(passportRule{input, eyrValid})
+	hgtValue := extractStringOrDefault(passportRule{input, hgtValid})
+	eclValue := extractStringOrDefault(passportRule{input, eclValid})
+	hclValue := extractStringOrDefault(passportRule{input, hclValid})
+
+	debugInfo := fmt.Sprintln("pidValue", pidValue, "cidValue", cidValue, "byrValue", byrValue, "eyrValue", eyrValue, "iyrValue", iyrValue, "hgtValue", hgtValue, "eclValue", eclValue, "hclValue", hclValue)
+
+	return passport{
+		PassportID:     pidValue,
+		CountryID:      cidValue,
+		BirthYear:      byrValue,
+		IssueYear:      iyrValue,
+		ExpirationYear: eyrValue,
+		Height:         hgtValue,
+		EyeColour:      eclValue,
+		HairColour:     hclValue,
+	}, debugInfo
+}
+
 func clean(data string) []string {
 	passportBlocks := strings.Split(data, "\n\n")
 
@@ -182,7 +230,7 @@ func part01(passports []string) int {
 	count := 0
 	for _, input := range passports {
 		p := newPassport(input)
-		ok, _ := p.checkFieldPresence()
+		ok, _ := p.hasAllRequiredFields()
 		if ok {
 			count++
 		}
@@ -193,23 +241,19 @@ func part01(passports []string) int {
 func part02(passports []string) int {
 	count := 0
 	for _, input := range passports {
-		p := newPassport(input)
-		ok, err := p.checkFieldPresence()
+		p, _ := newValidPassport(input)
+		ok, _ := p.hasAllRequiredFields()
 		if ok {
 			count++
-		} else {
-			fmt.Println("Checking ", input)
-			fmt.Printf("%v - INVALID\n", p.toString())
-			fmt.Println(err)
-			fmt.Println("")
 		}
 	}
 	return count
 }
 
-// TODO: redo with concurrency
+// // TODO: redo with concurrency
 func main() {
 	utils.Banner(4)
 	passports := clean(utils.LoadDataAsString("4.txt"))
-	fmt.Printf("%v passports => %v valid\n", len(passports), part01(passports))
+	fmt.Printf("%v passports => %v candidates\n", len(passports), part01(passports))
+	fmt.Printf("%v passports => %v valid\n", len(passports), part02(passports))
 }
