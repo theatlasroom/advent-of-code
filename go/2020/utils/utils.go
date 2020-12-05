@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
-	"strings"
 	s "strings"
 )
 
@@ -77,7 +76,7 @@ func StrToIntArr(str string, rest ...string) []int {
 
 func CountBlankLines(data string) {
 	countLines := 0
-	lines := strings.Split(data, "\n")
+	lines := s.Split(data, "\n")
 	for _, line := range lines {
 		if line == "" {
 			countLines++
