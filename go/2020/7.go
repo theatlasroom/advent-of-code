@@ -53,19 +53,30 @@ type bagContent struct {
 	count int
 }
 
+type bagContents []bagContent
+
 type bag struct {
 	id       string
-	contents []bagContent // ids of bags that can be contained in this bag
+	contents bagContents // ids of bags that can be contained in this bag
 }
 
-type bags []bag
+func (bc bagContents) contains(id string) bool {
+	for _, item := range bc {
+		if id == item.id {
+			return true
+		}
+	}
+	return false
+}
+
+type bags map[string]bag
 
 func bagID(col, shade string) string {
 	return strings.Join([]string{shade, col}, "_")
 }
 
-func extractContents(rawContents []string) []bagContent {
-	var contents []bagContent
+func extractContents(rawContents []string) bagContents {
+	var contents bagContents
 	for _, content := range rawContents {
 		fmt.Println(content)
 		csplit := strings.Split(strings.Trim(content, " "), " ")
@@ -79,30 +90,63 @@ func extractContents(rawContents []string) []bagContent {
 	return contents
 }
 
-func parseBag(str string) bag {
+func parseBag(str string) (string, bag) {
 	bagAndContents := strings.Split(str, "contain")
 	b, c := bagAndContents[0], bagAndContents[1]
 
 	bagAttributes := strings.Split(b, " ")
 	shade, col := bagAttributes[0], bagAttributes[1]
 
-	var contents []bagContent
+	var contents bagContents
 	if !strings.Contains(c, "no other") {
 		contents = extractContents(strings.Split(c, ","))
 	}
-	return bag{id: bagID(col, shade), contents: contents}
+	id := bagID(col, shade)
+	return id, bag{id: id, contents: contents}
 }
 
 func extractBags(data []string) bags {
-	var b bags
+	b := make(bags)
 	for _, str := range data {
-		b = append(b, parseBag(str))
+		key, nextBag := parseBag(str)
+		b[key] = nextBag
 	}
 	return b
 }
 
-// func canContainBag(bagID string) int {
-// }
+func canContainTargetBag(allBags bags, currentBag bag, targetBagId string) bool {
+	// for each bag, check all its children
+	currBagContents := currentBag.contents
+	if currBagContents.contains(targetBagId) {
+		return true
+	}
+
+	// travese the contents of this bag
+	for _, nextBagID := range currBagContents {
+		nextBag := allBags[nextBagID.id]
+		return canContainTargetBag(allBags, nextBag, targetBagId)
+	}
+
+	return false
+}
+
+func part01(bs bags, targetBag string) int {
+	count := 0
+	for _, b := range bs {
+		if len(b.contents) > 0 {
+			if b.contents.contains(targetBag) {
+				count++
+				continue
+			}
+			// traverse the contents
+			ok := canContainTargetBag(bs, b, targetBag)
+			if ok {
+				count++
+			}
+		}
+	}
+	return count
+}
 
 // TODO: should redo with trees
 func main() {
