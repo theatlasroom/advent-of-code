@@ -63,6 +63,7 @@ type answers map[string]bool
 type group struct {
 	responses string
 	answers
+	completeAnswers int
 }
 
 type customsGroups []group
@@ -79,12 +80,36 @@ func (cg customsGroups) sumAnswers() int {
 	return count
 }
 
-func parseGroupResponses(str string) answers {
-	a := make(answers)
-	for _, x := range str {
-		a[string(x)] = true
+func (cg customsGroups) sumCompleteAnswers() int {
+	count := 0
+	for _, g := range cg {
+		count += g.completeAnswers
 	}
-	return a
+	return count
+}
+
+func parseGroupResponses(str string) (answers, int) {
+	participants := len(strings.Split(str, " "))
+	completed := 0
+
+	a := make(answers)
+	unique := make(map[string]int)
+
+	for _, x := range str {
+		char := string(x)
+		if char != " " {
+			a[char] = true
+			unique[char]++
+		}
+	}
+
+	for _, y := range unique {
+		if y >= participants {
+			completed++
+		}
+	}
+
+	return a, completed
 }
 
 func parseData(data string) customsGroups {
@@ -93,8 +118,8 @@ func parseData(data string) customsGroups {
 	groupAnswers := strings.Split(strings.Replace(data, "\n", " ", -1), "  ")
 	for _, responses := range groupAnswers {
 
-		answers := parseGroupResponses(strings.Replace(responses, " ", "", -1))
-		cg = append(cg, group{responses, answers})
+		answers, completeAnswers := parseGroupResponses(responses)
+		cg = append(cg, group{responses, answers, completeAnswers})
 	}
 
 	return cg
@@ -106,4 +131,5 @@ func main() {
 	groups := parseData(data)
 
 	fmt.Println(groups.sumAnswers())
+	fmt.Println(groups.sumCompleteAnswers())
 }
