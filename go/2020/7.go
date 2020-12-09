@@ -1,3 +1,13 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+)
+
 /**
 --- Day 7: Handy Haversacks ---
 
@@ -38,6 +48,69 @@ How many bag colors can eventually contain at least one shiny gold bag? (The lis
 
 */
 
-func main() {
+type bagContent struct {
+	id    string
+	count int
+}
 
+type bag struct {
+	id       string
+	contents []bagContent // ids of bags that can be contained in this bag
+}
+
+type bags []bag
+
+func bagID(col, shade string) string {
+	return strings.Join([]string{shade, col}, "_")
+}
+
+func extractContents(rawContents []string) []bagContent {
+	var contents []bagContent
+	for _, content := range rawContents {
+		fmt.Println(content)
+		csplit := strings.Split(strings.Trim(content, " "), " ")
+		count, err := strconv.Atoi(csplit[0])
+		fmt.Println(csplit)
+		if err != nil {
+			count = 0
+		}
+		contents = append(contents, bagContent{id: bagID(csplit[2], csplit[1]), count: count})
+	}
+	return contents
+}
+
+func parseBag(str string) bag {
+	bagAndContents := strings.Split(str, "contain")
+	b, c := bagAndContents[0], bagAndContents[1]
+
+	bagAttributes := strings.Split(b, " ")
+	shade, col := bagAttributes[0], bagAttributes[1]
+
+	var contents []bagContent
+	if !strings.Contains(c, "no other") {
+		contents = extractContents(strings.Split(c, ","))
+	}
+	return bag{id: bagID(col, shade), contents: contents}
+}
+
+func extractBags(data []string) bags {
+	var b bags
+	for _, str := range data {
+		b = append(b, parseBag(str))
+	}
+	return b
+}
+
+// func canContainBag(bagID string) int {
+// }
+
+// TODO: should redo with trees
+func main() {
+	utils.Banner(7)
+	data := utils.LoadData("7.txt")
+	bags := extractBags(data)
+	fmt.Println(data)
+	for _, bag := range bags {
+		fmt.Println(bag)
+	}
 }
