@@ -48,6 +48,10 @@ How many bag colors can eventually contain at least one shiny gold bag? (The lis
 
 */
 
+type bagID struct {
+	col, shade string
+}
+
 type bagContent struct {
 	id    string
 	count int
@@ -69,23 +73,29 @@ func (bc bagContents) contains(id string) bool {
 	return false
 }
 
+func (bc bagContents) toArray() []string {
+	var arr []string
+	for _, item := range bc {
+		arr = append(arr, item.id)
+	}
+	return arr
+}
+
 type bags map[string]bag
 
-func bagID(col, shade string) string {
-	return strings.Join([]string{shade, col}, "_")
+func generateBagID(b bagID) string {
+	return strings.Join([]string{b.shade, b.col}, "_")
 }
 
 func extractContents(rawContents []string) bagContents {
 	var contents bagContents
 	for _, content := range rawContents {
-		fmt.Println(content)
 		csplit := strings.Split(strings.Trim(content, " "), " ")
 		count, err := strconv.Atoi(csplit[0])
-		fmt.Println(csplit)
 		if err != nil {
 			count = 0
 		}
-		contents = append(contents, bagContent{id: bagID(csplit[2], csplit[1]), count: count})
+		contents = append(contents, bagContent{id: generateBagID(bagID{col: csplit[2], shade: csplit[1]}), count: count})
 	}
 	return contents
 }
@@ -101,7 +111,7 @@ func parseBag(str string) (string, bag) {
 	if !strings.Contains(c, "no other") {
 		contents = extractContents(strings.Split(c, ","))
 	}
-	id := bagID(col, shade)
+	id := generateBagID(bagID{col: col, shade: shade})
 	return id, bag{id: id, contents: contents}
 }
 
@@ -114,32 +124,45 @@ func extractBags(data []string) bags {
 	return b
 }
 
-func canContainTargetBag(allBags bags, currentBag bag, targetBagId string) bool {
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
+func canContainTargetBag(allBags bags, candidates []string, targetBagID string) bool {
 	// for each bag, check all its children
-	currBagContents := currentBag.contents
-	if currBagContents.contains(targetBagId) {
+	// fmt.Println(currentBag.id, targetBagID, currentBag.contents)
+	if contains(candidates, targetBagID) {
 		return true
 	}
 
 	// travese the contents of this bag
-	for _, nextBagID := range currBagContents {
-		nextBag := allBags[nextBagID.id]
-		return canContainTargetBag(allBags, nextBag, targetBagId)
+	for _, nextBagID := range candidates {
+		nextBag := allBags[nextBagID]
+		bagContents := nextBag.contents
+		if len(bagContents) < 1 {
+			fmt.Println(nextBag.id, " is empty")
+			continue
+		}
+		fmt.Println(nextBagID, "=>", bagContents.toArray())
+		return canContainTargetBag(allBags, bagContents.toArray(), targetBagID)
 	}
 
 	return false
 }
 
-func part01(bs bags, targetBag string) int {
+func p20200701(bs bags, targetBag string) int {
 	count := 0
 	for _, b := range bs {
+		fmt.Println("")
+		fmt.Println(b.id, " => ", b.contents)
 		if len(b.contents) > 0 {
-			if b.contents.contains(targetBag) {
-				count++
-				continue
-			}
-			// traverse the contents
-			ok := canContainTargetBag(bs, b, targetBag)
+			ok := canContainTargetBag(bs, b.contents.toArray(), targetBag)
+			fmt.Println("can contain: ", ok)
 			if ok {
 				count++
 			}
@@ -148,13 +171,12 @@ func part01(bs bags, targetBag string) int {
 	return count
 }
 
-// TODO: should redo with trees
+// TODO: should redo with proper trees
 func main() {
 	utils.Banner(7)
 	data := utils.LoadData("7.txt")
-	bags := extractBags(data)
-	fmt.Println(data)
-	for _, bag := range bags {
-		fmt.Println(bag)
-	}
+	bs := extractBags(data)
+	targetID := generateBagID(bagID{col: "gold", shade: "shiny"})
+	// fmt.Println(len(bs))
+	fmt.Println(p20200701(bs, targetID))
 }
