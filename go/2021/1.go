@@ -1,10 +1,7 @@
 package main
 
 import (
-	// "errors"
 	"fmt"
-	// "log"
-	// "sort"
 
 	"github.com/theatlasroom/advent-of-code/go/2020/utils"
 )
@@ -62,13 +59,13 @@ Considering every single measurement isn't as useful as you expected: there's ju
 
 Instead, consider sums of a three-measurement sliding window. Again considering the above example:
 
-199  A      
-200  A B    
-208  A B C  
+199  A
+200  A B
+208  A B C
 210    B C D
 200  E   C D
 207  E F   D
-240  E F G  
+240  E F G
 269    F G H
 260      G H
 263        H
@@ -112,7 +109,7 @@ func (w tuple) Full() bool {
 	return false
 }
 
-func part2(data []int){
+func part2(data []int) {
 	var a tuple
 	var b tuple
 	maxItems := len(data)
@@ -141,11 +138,11 @@ func part1(data []int) {
 
 	increases := 0
 	curr := 0
-	for _, next := range data {		
+	for _, next := range data {
 		if next > curr && curr != 0 {
 			increases += 1
 		}
-		curr = next	
+		curr = next
 	}
 	fmt.Printf("Part 1: Increased %d times\n", increases)
 }
