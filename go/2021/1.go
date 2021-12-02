@@ -94,38 +94,37 @@ Consider sums of a three-measurement sliding window. How many sums are larger th
 
 **/
 
-type window struct {
-	Items [3]int
+type tuple [3]int
+
+func (w tuple) Add(i int) tuple {
+	w = [3]int{w[1], w[2], i}
+	return w
 }
 
-func (w *window) AddItem(i int) {
-	w.Items = [3]int{w.Items[1], w.Items[2], i}
+func (w tuple) Sum() int {
+	return w[0] + w[1] + w[2]
 }
 
-func (w *window) Sum() int {
-	return w.Items[0] + w.Items[1] + w.Items[2]
-}
-
-func (w *window) Full() bool {
-	if w.Items[0] > 0 && w.Items[1] > 0 && w.Items[2] > 0 {
+func (w tuple) Full() bool {
+	if w[0] > 0 && w[1] > 0 && w[2] > 0 {
 		return true
 	}
 	return false
 }
 
 func part2(data []int){
-	var a window
-	var b window
-	maxItems := len(data) - 1
+	var a tuple
+	var b tuple
+	maxItems := len(data)
 	increases := 0
 	curr := 0
 
 	for idx, next := range data {
-		if idx != 0 && idx <= maxItems {
-			b.AddItem(curr)
+		if idx != 0 && idx < maxItems {
+			b = b.Add(curr)
 		}
-		if idx <= maxItems {
-			a.AddItem(next)
+		if idx < maxItems {
+			a = a.Add(next)
 		}
 		if a.Full() && b.Full() {
 			if a.Sum() > b.Sum() {
