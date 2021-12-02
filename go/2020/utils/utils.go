@@ -42,9 +42,9 @@ func LoadDataAsString(filename string) string {
 }
 
 // Banner prints a text heading for the day specified
-func Banner(day int) {
+func Banner(year, day int) {
 	fmt.Println("==============================")
-	fmt.Printf(" Advent of code 2020 - Day %v\n", day)
+	fmt.Printf(" Advent of code %d - Day %d\n", year, day)
 	fmt.Println("==============================")
 }
 

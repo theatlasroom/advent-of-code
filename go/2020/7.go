@@ -126,6 +126,7 @@ func extractBags(data []string) bags {
 
 func contains(s []string, str string) bool {
 	for _, v := range s {
+		fmt.Println("v", v, "str", str)
 		if v == str {
 			return true
 		}
@@ -133,25 +134,47 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func canContainTargetBag(allBags bags, candidates []string, targetBagID string) bool {
-	// for each bag, check all its children
-	// fmt.Println(currentBag.id, targetBagID, currentBag.contents)
-	if contains(candidates, targetBagID) {
-		return true
-	}
-
-	// travese the contents of this bag
-	for _, nextBagID := range candidates {
-		nextBag := allBags[nextBagID]
-		bagContents := nextBag.contents
-		if len(bagContents) < 1 {
-			fmt.Println(nextBag.id, " is empty")
-			continue
+func mergeArraysWithoutDuplicates(left, right []string) []string {
+	for _, el := range left {
+		if !contains(right, el) {
+			right = append(left, el)
 		}
-		fmt.Println(nextBagID, "=>", bagContents.toArray())
-		return canContainTargetBag(allBags, bagContents.toArray(), targetBagID)
 	}
+	return right
+}
 
+// func canContainTargetBag(allBags bags, candidates []string, targetBagID string) bool {
+// 	// for each bag, check all its children
+// 	// fmt.Println(currentBag.id, targetBagID, currentBag.contents)
+// 	// if contains(candidates, targetBagID) {
+// 	// 	return true
+// 	// }
+
+// 	// travese the contents of this bag
+// 	for _, nextBagID := range candidates {
+// 		fmt.Println("candidates", candidates)
+// 		if contains(candidates, targetBagID) {
+// 			return true
+// 		}
+// 		nextBag := allBags[nextBagID]
+// 		bagContents := nextBag.contents
+// 		if len(bagContents) < 1 {
+// 			fmt.Println(nextBag.id, " is empty")
+// 			continue
+// 		}
+// 		fmt.Println(nextBagID, "=>", bagContents.toArray())
+// 		fmt.Println("candidates", candidates)
+// 		return canContainTargetBag(allBags, bagContents.toArray(), targetBagID)
+// 		// candidates = mergeArraysWithoutDuplicates(candidates, bagContents.toArray())
+// 	}
+
+// 	return false
+// }
+
+func canContainTargetBag(allBags bags, candidates []string, targetBagID string) bool {
+	for _, nextBagID := range candidates {
+		if contains(candidates, targetBagID)
+	}
 	return false
 }
 
