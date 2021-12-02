@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -134,7 +134,8 @@ func part2(data []int) {
 }
 
 func part1(data []int) {
-	utils.Banner(2021, 1)
+	cfg := utils.BannerConfig{Year: 2021, Day: 1}
+	utils.Banner(cfg)
 
 	increases := 0
 	curr := 0

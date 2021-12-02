@@ -140,7 +140,7 @@ func part02(data []string) (int, error) {
 }
 
 func main() {
-	utils.Banner(5)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 5})
 	data := utils.LoadData("5.txt")
 	fmt.Println(part01(data).toString())
 	seatID, err := part02(data)

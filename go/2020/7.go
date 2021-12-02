@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -196,7 +196,7 @@ func p20200701(bs bags, targetBag string) int {
 
 // TODO: should redo with proper trees
 func main() {
-	utils.Banner(7)
+	utils.Banner(utils.BannerConfig{ Year: 2020, Day: 7 })
 	data := utils.LoadData("7.txt")
 	bs := extractBags(data)
 	targetID := generateBagID(bagID{col: "gold", shade: "shiny"})
