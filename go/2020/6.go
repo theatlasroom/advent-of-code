@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -126,7 +126,7 @@ func parseData(data string) customsGroups {
 }
 
 func main() {
-	utils.Banner(6)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 6})
 	data := utils.LoadDataAsString("6.txt")
 	groups := parseData(data)
 

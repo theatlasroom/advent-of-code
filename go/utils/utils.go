@@ -9,6 +9,10 @@ import (
 	s "strings"
 )
 
+type BannerConfig struct {
+	Year, Day int
+}
+
 // CheckAndPanic checks for an error and panics if one is found
 func CheckAndPanic(e error) {
 	if e != nil {
@@ -42,9 +46,9 @@ func LoadDataAsString(filename string) string {
 }
 
 // Banner prints a text heading for the day specified
-func Banner(year, day int) {
+func Banner(cfg BannerConfig) {
 	fmt.Println("==============================")
-	fmt.Printf(" Advent of code %d - Day %d\n", year, day)
+	fmt.Printf(" Advent of code %d - Day %d\n", cfg.Year, cfg.Day)
 	fmt.Println("==============================")
 }
 

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -252,7 +252,7 @@ func part02(passports []string) int {
 
 // // TODO: redo with concurrency
 func main() {
-	utils.Banner(4)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 4})
 	passports := clean(utils.LoadDataAsString("4.txt"))
 	fmt.Printf("%v passports => %v candidates\n", len(passports), part01(passports))
 	fmt.Printf("%v passports => %v valid\n", len(passports), part02(passports))

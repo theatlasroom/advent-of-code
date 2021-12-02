@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -150,7 +150,7 @@ func p202032(trees treeLocations) ([]int, int) {
 }
 
 func main() {
-	utils.Banner(3)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 3})
 	data := utils.LoadData("3.txt")
 	trees := make([][]int, len(data))
 

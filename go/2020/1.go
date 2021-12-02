@@ -6,7 +6,7 @@ import (
 	"log"
 	"sort"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -136,7 +136,7 @@ func part2(asc, desc []int) triplet {
 
 func main() {
 	// Read all the numbers
-	utils.Banner(1)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 1})
 	input := utils.LoadDataAsString("1.txt")
 
 	data := utils.StrToIntArr(input)

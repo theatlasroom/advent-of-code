@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/theatlasroom/advent-of-code/go/2020/utils"
+	"github.com/theatlasroom/advent-of-code/go/utils"
 )
 
 /**
@@ -110,7 +110,7 @@ func findValidPasswords(policies []policy, validator validatorFn) int {
 }
 
 func main() {
-	utils.Banner(2)
+	utils.Banner(utils.BannerConfig{Year: 2020, Day: 2})
 	data := utils.LoadData("2.txt")
 
 	policies := extractPolicies(data)
