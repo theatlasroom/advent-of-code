@@ -80,11 +80,19 @@ type aimVector struct {
 	XPos, ZPos, Aim int
 }
 
-type positionable interface {
+type moveable interface {
 	Forward(int)
 	Up(int)
 	Down(int)
+}
+
+type positionable interface {
 	Position() int
+}
+
+type positionableMoveable interface {
+	moveable
+	positionable
 }
 
 type direction int
@@ -155,7 +163,7 @@ func parseInstruction(str string) instruction {
 	}
 }
 
-func computePosition(sub positionable, data []string) int {
+func computePosition(sub positionableMoveable, data []string) int {
 	for _, line := range data {
 		i := parseInstruction(line)
 		switch i.Direction {
