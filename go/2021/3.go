@@ -44,17 +44,17 @@ The epsilon rate is calculated in a similar way; rather than use the most common
 Use the binary numbers in your diagnostic report to calculate the gamma rate and epsilon rate, then multiply them together. What is the power consumption of the submarine? (Be sure to represent your answer in decimal, not binary.)
 */
 
-func generateMask(len int) uint32 {
+func generateMask(maskLength int) uint32 {
 	var str string
-	i := 0
-	for i < len {
+	for len(str) < maskLength {
 		str += "1"
-		i += 1
 	}
 	return binaryStringAsUint32(str)
 }
 
 func flipBits(v uint32, mask uint32) uint32 {
+	// bitwise negate the value v, then perform a bitwise AND using the provided mask
+	// given v = 1100100010, mask 0b111111111111, returns 110011011101
 	return ^v & mask
 }
 
@@ -67,36 +67,36 @@ func binaryStringAsUint32(s string) uint32 {
 }
 
 func calculatePower(counts []int, threshhold int, mask uint32) uint32 {
-	gamma, epsilon := generateRates(counts, threshhold, mask)
+	str := generateRates(counts, threshhold, mask)
+	gamma := binaryStringAsUint32(str)
+	epsilon := flipBits(gamma, mask)
 	return gamma * epsilon
 }
 
-func generateRates(counts []int, threshhold int, mask uint32) (uint32, uint32) {
-	var bit string
+func generateRates(counts []int, threshhold int, mask uint32) string {
 	str := ""
 	for _, i := range counts {
-		bit = "0"
 		if i > threshhold {
-			bit = "1"
+			str += "1"
+			continue
 		}
-		str += bit
+		str += "0"
 	}
-
-	gamma := binaryStringAsUint32(str)
-	return gamma, flipBits(gamma, mask)
+	return str
 }
 
 type lifeSupportRating struct {
 	Zeros, Ones []string
 }
 
-func matchCriteria(input []string, bit int, comparator func(lifeSupportRating) []string) string {
+type lifeSupportComparatorFn = func(lfr lifeSupportRating) []string
+
+func matchCriteria(input []string, bit int, comparator lifeSupportComparatorFn) string {
 	if len(input) == 1 {
 		return input[0]
 	}
 	var zeros []string
 	var ones []string
-	var matching []string
 
 	for _, str := range input {
 		if str[bit] == '1' {
@@ -107,8 +107,7 @@ func matchCriteria(input []string, bit int, comparator func(lifeSupportRating) [
 	}
 
 	rating := lifeSupportRating{Zeros: zeros, Ones: ones}
-	matching = comparator(rating)
-	return matchCriteria(matching, bit+1, comparator)
+	return matchCriteria(comparator(rating), bit+1, comparator)
 }
 
 func part2(data []string) {
