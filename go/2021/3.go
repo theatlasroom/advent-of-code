@@ -86,6 +86,48 @@ func generateRates(counts []int, threshhold int, mask uint32) (uint32, uint32) {
 	return gamma, flipBits(gamma, mask)
 }
 
+type lifeSupportRating struct {
+	Zeros, Ones []string
+}
+
+func matchCriteria(input []string, bit int, comparator func(lifeSupportRating) []string) string {
+	if len(input) == 1 {
+		return input[0]
+	}
+	var zeros []string
+	var ones []string
+	var matching []string
+
+	for _, str := range input {
+		if str[bit] == '1' {
+			ones = append(ones, str)
+		} else {
+			zeros = append(zeros, str)
+		}
+	}
+
+	rating := lifeSupportRating{Zeros: zeros, Ones: ones}
+	matching = comparator(rating)
+	return matchCriteria(matching, bit+1, comparator)
+}
+
+func part2(data []string) {
+	oxygen := matchCriteria(data, 0, func(lfr lifeSupportRating) []string {
+		if len(lfr.Ones) >= len(lfr.Zeros) {
+			return lfr.Ones
+		}
+		return lfr.Zeros
+	})
+
+	c02 := matchCriteria(data, 0, func(lfr lifeSupportRating) []string {
+		if len(lfr.Ones) < len(lfr.Zeros) {
+			return lfr.Ones
+		}
+		return lfr.Zeros
+	})
+	fmt.Printf("Part 2: life support rating %v\n", binaryStringAsUint32(oxygen)*binaryStringAsUint32(c02))
+}
+
 func part1(data []string) {
 	size := 12
 	mask := generateMask(size)
@@ -113,4 +155,5 @@ func main() {
 	input := utils.LoadData("3.txt")
 
 	part1(input)
+	part2(input)
 }
