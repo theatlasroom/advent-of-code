@@ -77,29 +77,28 @@ type bingo struct {
 }
 
 func hasBingo(values map[int]bool, board []int) (bool, []int) {
-	// rows := 5
+	rows := 5
 	cols := 5
 
 	// check rows
-	// for i := 0; i < rows; i += 1 {
-	//  won := true
-	// 	start := i * cols
-	// 	end := start + cols
-	// 	arr := board[start:end]
-	// 	// fmt.Println(arr)
+	for i := 0; i < rows; i += 1 {
+		won := true
+		start := i * cols
+		end := start + cols
+		arr := board[start:end]
 
-	// 	for _, v := range arr {
-	// 		_, ok := values[v]
-	// 		if !ok {
-	// 			won = false
-	// 			break
-	// 		}
-	// 	}
+		for _, v := range arr {
+			_, ok := values[v]
+			if !ok {
+				won = false
+				break
+			}
+		}
 
-	// 	if won {
-	// 		return true, arr
-	// 	}
-	// }
+		if won {
+			return true, arr
+		}
+	}
 
 	boardLength := len(board)
 
@@ -112,8 +111,6 @@ func hasBingo(values map[int]bool, board []int) (bool, []int) {
 			arr = append(arr, board[j])
 		}
 
-		fmt.Println("col", arr)
-
 		for _, v := range arr {
 			_, ok := values[v]
 			if !ok {
@@ -123,8 +120,6 @@ func hasBingo(values map[int]bool, board []int) (bool, []int) {
 		}
 
 		if won {
-			fmt.Println("win::col", arr)
-			fmt.Println("win::values", values)
 			return true, arr
 		}
 	}
@@ -134,31 +129,30 @@ func hasBingo(values map[int]bool, board []int) (bool, []int) {
 
 func checkAllBoards(values map[int]bool, bs []board) (bool, board) {
 	for _, b := range bs {
-		res, arr := hasBingo(values, b)
+		res, _ := hasBingo(values, b)
 		if res {
-			fmt.Println("Winner", arr)
 			return true, b
 		}
 	}
 	return false, nil
 }
 
-func playGame(game bingo) (bool, board, map[int]bool) {
+func playGame(game bingo) (bool, board, map[int]bool, int) {
 	values := make(map[int]bool)
 	for idx, num := range game.Numbers {
 		values[num] = true
 		if idx > 5 {
 			complete, board := checkAllBoards(values, game.Boards)
 			if complete {
-				return true, board, values
+				return true, board, values, num
 			}
 		}
 	}
-	return false, nil, nil
+	return false, nil, nil, 0
 }
 
 func part1(game bingo) {
-	ok, b, marked := playGame(game)
+	ok, b, marked, finalNumber := playGame(game)
 	sum := 0
 	if ok {
 		for _, v := range b {
@@ -168,7 +162,7 @@ func part1(game bingo) {
 			}
 		}
 	}
-	fmt.Println("Part 1: Sum", sum)
+	fmt.Println("Part 1: Bingo", sum*finalNumber)
 }
 
 func parseBoard(input []string) board {
