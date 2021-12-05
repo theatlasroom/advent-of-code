@@ -193,8 +193,6 @@ func playGameUntilEnd(game bingo) (board, map[int]bool, int) {
 	var winner board
 	var finalNumber int
 
-	// var bs []board
-
 	candidateBoards := game.Boards
 	hasWinner := true
 
@@ -206,22 +204,16 @@ func playGameUntilEnd(game bingo) (board, map[int]bool, int) {
 			if idx > 5 && len(candidateBoards) > 0 {
 				complete, board, boardIndex := checkAllBoards(values, candidateBoards)
 				if complete {
-					// bs = append(bs, board)
 					winner = board
 					finalNumber = num
 					candidateBoards = remove(candidateBoards, boardIndex)
 					currValues = cloneMap(values)
-					fmt.Println("currValues", complete, len(candidateBoards), finalNumber, inputDataKeys(currValues))
-					// fmt.Println(finalNumber, inputDataKeys(currValues))
 					hasWinner = true
 					break
 				}
 			}
 		}
 	}
-	fmt.Println(winner, finalNumber)
-	// fmt.Println(currValues, len(currValues), len(values))
-	// fmt.Println(bs)
 	return winner, currValues, finalNumber
 }
 
@@ -234,21 +226,6 @@ func calculateScore(b board, marked map[int]bool, finalNumber int) int {
 		}
 	}
 	return sum * finalNumber
-}
-
-func part2(game bingo) {
-	b, marked, finalNumber := playGameUntilEnd(game)
-	score := calculateScore(b, marked, finalNumber)
-	fmt.Println("Part 2: Bingo", score)
-}
-
-func part1(game bingo) {
-	ok, b, marked, finalNumber := playGame(game)
-	score := 0
-	if ok {
-		score = calculateScore(b, marked, finalNumber)
-	}
-	fmt.Println("Part 1: Bingo", score)
 }
 
 func parseBoard(input []string) board {
@@ -283,7 +260,7 @@ func combineLinesIntoString(str string) string {
 	return strings.Join(strings.Split(str, "\n"), " ")
 }
 
-func parseInput(in string) bingo {
+func parseBingoInput(in string) bingo {
 	arrs := strings.Split(in, "\n\n")
 	var nums []int
 	var boards []board
@@ -300,13 +277,28 @@ func parseInput(in string) bingo {
 	return bingo{Numbers: nums, Boards: boards}
 }
 
+func part2(game bingo) {
+	b, marked, finalNumber := playGameUntilEnd(game)
+	score := calculateScore(b, marked, finalNumber)
+	fmt.Println("Part 2: Bingo", score)
+}
+
+func part1(game bingo) {
+	ok, b, marked, finalNumber := playGame(game)
+	score := 0
+	if ok {
+		score = calculateScore(b, marked, finalNumber)
+	}
+	fmt.Println("Part 1: Bingo", score)
+}
+
 func main() {
 	cfg := utils.BannerConfig{Year: 2021, Day: 4}
 	utils.Banner(cfg)
 
 	// Read all the numbers
 	str := utils.LoadDataAsString("4.txt")
-	game := parseInput(str)
+	game := parseBingoInput(str)
 
 	part1(game)
 	part2(game)
