@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 
@@ -65,6 +66,48 @@ type ventLines struct {
 
 func (p *point) encode() string {
 	return fmt.Sprintf("%d-%d", p.X, p.Y)
+}
+
+func (l *ventLines) delta() int {
+	return int(math.Ceil(math.Sqrt(math.Pow(float64(l.End.X-l.Start.X), 2) + math.Pow(float64(l.End.Y-l.Start.Y), 2))))
+}
+
+func (l *ventLines) deltaY() int {
+	return intAbs(l.Start.Y - l.End.Y)
+}
+
+func (l *ventLines) deltaX() int {
+	return intAbs(l.Start.X - l.End.X)
+}
+
+func (l *ventLines) offset() point {
+	return point{
+		X: (l.Start.X - l.End.X) / intAbs(l.Start.X-l.End.X),
+		Y: (l.Start.Y - l.End.Y) / intAbs(l.Start.Y-l.End.Y),
+	}
+}
+
+func (l *ventLines) orientation() (point, point) {
+	if l.Start.X > l.End.X && l.Start.Y > l.End.Y {
+		return l.End, l.Start
+	}
+	return l.Start, l.End
+}
+
+func (l *ventLines) originY() point {
+	origin := l.Start
+	if l.Start.Y > l.End.Y {
+		origin = l.End
+	}
+	return origin
+}
+
+func (l *ventLines) originX() point {
+	origin := l.Start
+	if l.Start.X > l.End.X {
+		origin = l.End
+	}
+	return origin
 }
 
 func (v *ventLines) isVertical() bool {
@@ -136,42 +179,77 @@ func countPointsCovered(pc map[string]int) int {
 	return total
 }
 
+func nextPoint(origin point, xOffset, yOffset int) string {
+	p := point{
+		X: origin.X + xOffset,
+		Y: origin.Y + yOffset,
+	}
+	return p.encode()
+}
+
+func (o *point) move(p point) {
+	o.X += p.X
+	o.Y += p.Y
+}
+
+func part2(lines []ventLines) {
+	covered := make(map[string]int)
+
+	for _, l := range lines {
+		if l.isVertical() {
+			delta := l.deltaY()
+			origin := l.originY()
+
+			for i := 0; i <= delta; i += 1 {
+				key := nextPoint(origin, 0, i)
+				covered[key] += 1
+			}
+		} else if l.isHorizontal() {
+			delta := l.deltaX()
+			origin := l.originX()
+
+			for i := 0; i <= delta; i += 1 {
+				key := nextPoint(origin, i, 0)
+				covered[key] = covered[key] + 1
+			}
+		} else {
+			offs := l.offset()
+			pos := l.End
+
+			key := nextPoint(pos, 0, 0)
+			covered[key] = covered[key] + 1
+
+			for pos.X != l.Start.X && pos.Y != l.Start.Y {
+				key = nextPoint(pos, offs.X, offs.Y)
+				covered[key] = covered[key] + 1
+				pos.move(offs)
+			}
+		}
+	}
+
+	total := countPointsCovered(covered)
+	fmt.Printf("Part 2: points %d\n", total)
+}
+
 func part1(lines []ventLines) {
 	covered := make(map[string]int)
 
 	for _, l := range lines {
 		if l.isVertical() {
-			delta := intAbs(l.Start.Y - l.End.Y)
-			origin := l.Start
-			if l.Start.Y > l.End.Y {
-				origin = l.End
-			}
+			delta := l.deltaY()
+			origin := l.originY()
 
 			for i := 0; i <= delta; i += 1 {
-				p := point{
-					X: origin.X,
-					Y: origin.Y + i,
-				}
-
-				key := p.encode()
+				key := nextPoint(origin, 0, i)
 				covered[key] += 1
-
 			}
 		}
-
 		if l.isHorizontal() {
-			delta := intAbs(l.Start.X - l.End.X)
-			origin := l.Start
-			if l.Start.X > l.End.X {
-				origin = l.End
-			}
+			delta := l.deltaX()
+			origin := l.originX()
 
 			for i := 0; i <= delta; i += 1 {
-				p := point{
-					X: origin.X + i,
-					Y: origin.Y,
-				}
-				key := p.encode()
+				key := nextPoint(origin, i, 0)
 				covered[key] = covered[key] + 1
 			}
 		}
@@ -190,4 +268,5 @@ func main() {
 	lines := parseVentInput(str)
 
 	part1(lines)
+	part2(lines)
 }
