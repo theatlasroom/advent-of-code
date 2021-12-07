@@ -76,6 +76,7 @@ func Banner(cfg BannerConfig) {
 const defaultDelim = "\n"
 
 // StrToIntArr converts a delim separated string into a list of ints
+
 func StrToIntArr(str string, rest ...string) []int {
 	return CustomStrToIntArr(defaultDelim, str, rest...)
 }
