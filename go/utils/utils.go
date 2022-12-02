@@ -56,7 +56,10 @@ const defaultDelim = "\n"
 
 // StrToIntArr converts a delim separated string into a list of ints
 func StrToIntArr(str string, rest ...string) []int {
-	var delim string
+	return CustomStrToIntArr(defaultDelim, str, rest...)
+}
+
+func CustomStrToIntArr(delim string, str string, rest ...string) []int {
 	if len(rest) > 0 {
 		delim = rest[0]
 	} else {
@@ -68,6 +71,29 @@ func StrToIntArr(str string, rest ...string) []int {
 
 	for _, v := range a {
 		if len(v) < 1 {
+			continue
+		}
+		r, err := strconv.Atoi(v)
+		CheckAndPanic(err)
+
+		b = append(b, r)
+	}
+	return b
+}
+
+func CustomStrToIntArrWithBlanks(zeroValue int, delim string, str string, rest ...string) []int {
+	if len(rest) > 0 {
+		delim = rest[0]
+	} else {
+		delim = defaultDelim
+	}
+
+	a := s.Split(str, delim)
+	var b []int
+
+	for _, v := range a {
+		if len(v) < 1 {
+			b = append(b, zeroValue)
 			continue
 		}
 		r, err := strconv.Atoi(v)
