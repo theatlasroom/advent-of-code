@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/theatlasroom/advent-of-code/go/utils"
 )
@@ -48,6 +49,16 @@ In case the Elves get hungry and need extra snacks, they need to know which Elf 
 
 Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
 
+--- Part Two ---
+
+By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories of food might eventually run out of snacks.
+
+To avoid this unacceptable situation, the Elves would instead like to know the total Calories carried by the top three Elves carrying the most Calories. That way, even if one of those Elves runs out of snacks, they still have two backups.
+
+In the example above, the top three Elves are the fourth Elf (with 24000 Calories), then the third Elf (with 11000 Calories), then the fifth Elf (with 10000 Calories). The sum of the Calories carried by these three elves is 45000.
+
+Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
+
 **/
 
 func sumCalories(calories []int) int {
@@ -58,15 +69,6 @@ func sumCalories(calories []int) int {
 
 	return count
 }
-
-// func maxCalories() []int {
-
-// }
-
-// func findMaxCalories() int {
-// 	max := maxCalories()
-// 	return sumCalories(max)
-// }
 
 func part1(data []int) {
 	cfg := utils.BannerConfig{Year: 2022, Day: 1}
@@ -91,10 +93,38 @@ func part1(data []int) {
 	fmt.Printf("Part 1: Total calories %d\n", calories)
 }
 
+func part2(data []int) {
+	cfg := utils.BannerConfig{Year: 2022, Day: 2}
+	utils.Banner(cfg)
+
+	var calorieValues []int
+	var calories []int
+
+	for index, i := range data {
+		if i > -1 {
+			if index == len(data)-1 {
+				calories = append(calories, i)
+			} else {
+				calorieValues = append(calorieValues, i)
+				continue
+			}
+		} else {
+			calories = append(calories, sumCalories(calorieValues))
+			calorieValues = []int{}
+		}
+	}
+
+	sort.Ints(calories)
+	topElves := calories[len(calories)-3:]
+
+	fmt.Printf("Part 2: Total calories %d\n", sumCalories(topElves))
+}
+
 func main() {
 	// Read all the numbers
 	input := utils.LoadDataAsString("1.txt")
 	data := utils.CustomStrToIntArrWithBlanks(-1, " ", input)
 
 	part1(data)
+	part2(data)
 }
