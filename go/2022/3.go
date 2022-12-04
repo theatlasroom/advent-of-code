@@ -83,6 +83,20 @@ func findCommonItem(midpoint int, left, right string) string {
 	return dup
 }
 
+func part2(data []string) {
+	cfg := utils.BannerConfig{Year: 2022, Day: 3}
+	utils.Banner(cfg)
+
+	sum := 0
+
+	for i := 0; i < len(data); i += 3 {
+		one, two, three := data[i], data[i:i+1], data[i:i+2]
+		fmt.Println(one, two, three)
+	}
+
+	fmt.Printf("Part 2: Sum %d\n", sum)
+}
+
 func part1(data []string) {
 	cfg := utils.BannerConfig{Year: 2022, Day: 3}
 	utils.Banner(cfg)
@@ -104,5 +118,6 @@ func part1(data []string) {
 func main() {
 	// Read all the numbers
 	data := utils.LoadData("3.txt")
-	part1(data)
+	// part1(data)
+	part2(data)
 }
