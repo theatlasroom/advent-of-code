@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/theatlasroom/advent-of-code/go/utils"
 )
@@ -83,24 +84,59 @@ func findCommonItem(midpoint int, left, right string) string {
 	return dup
 }
 
-func part2(data []string) {
-	cfg := utils.BannerConfig{Year: 2022, Day: 3}
-	utils.Banner(cfg)
+func findLargestString(strs []string) []string {
+	sort.Slice(strs, func(i, j int) bool {
+		return len(strs[i]) < len(strs[j])
+	})
 
+	return strs
+}
+
+func compileBoolmaps(rucksacks ...string) []boolset {
+	boolmap := make([]boolset, len(rucksacks))
+
+	for index, sack := range rucksacks {
+		boolmap[index] = boolset{}
+
+		for _, s := range sack {
+			boolmap[index][string(s)] = true
+		}
+	}
+
+	return boolmap
+}
+
+func part2(data []string) {
 	sum := 0
 
 	for i := 0; i < len(data); i += 3 {
-		one, two, three := data[i], data[i:i+1], data[i:i+2]
-		fmt.Println(one, two, three)
+		one, two, three := data[i:i+1], data[i+1:i+2], data[i+2:i+3]
+		strmap := compileBoolmaps(one[0], two[0], three[0])
+		str := findLargestString([]string{one[0], two[0], three[0]})[2]
+
+		common := ""
+		for _, s := range str {
+			found := true
+
+			for _, m := range strmap {
+				if !m[string(s)] {
+					found = false
+				}
+			}
+
+			if found {
+				common = string(s)
+				break
+			}
+		}
+
+		sum += scoreItem(common)
 	}
 
 	fmt.Printf("Part 2: Sum %d\n", sum)
 }
 
 func part1(data []string) {
-	cfg := utils.BannerConfig{Year: 2022, Day: 3}
-	utils.Banner(cfg)
-
 	sum := 0
 
 	var midpoint int
@@ -118,6 +154,8 @@ func part1(data []string) {
 func main() {
 	// Read all the numbers
 	data := utils.LoadData("3.txt")
-	// part1(data)
+	cfg := utils.BannerConfig{Year: 2022, Day: 3}
+	utils.Banner(cfg)
+	part1(data)
 	part2(data)
 }
