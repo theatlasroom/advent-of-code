@@ -22,14 +22,35 @@ func CheckAndPanic(e error) {
 
 // LoadData reads each line of input into a string array
 func LoadData(filename string) []string {
-	data := []string{}
-
 	handler, err := os.Open(fmt.Sprintf("data/%s", filename))
+
 	CheckAndPanic(err)
+	defer handler.Close()
 
 	scanner := bufio.NewScanner(handler)
+	data := []string{}
+
 	for scanner.Scan() {
 		data = append(data, s.TrimSpace(scanner.Text()))
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
+	return data
+}
+
+// LoadData reads each line of input into a string array
+func LoadDataWithSpacesPreserved(filename string) []string {
+	handler, err := os.Open(fmt.Sprintf("data/%s", filename))
+
+	CheckAndPanic(err)
+	defer handler.Close()
+
+	scanner := bufio.NewScanner(handler)
+	data := []string{}
+
+	for scanner.Scan() {
+		data = append(data, scanner.Text())
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
