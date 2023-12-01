@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/theatlasroom/advent-of-code/go/utils"
 )
@@ -43,16 +45,138 @@ In this example, the calibration values of these four lines are 12, 38, 15, and 
 Consider your entire calibration document. What is the sum of all of the calibration values?
 
 */
+var digitStrings = map[string]int{
+	"one":   1,
+	"two":   2,
+	"three": 3,
+	"four":  4,
+	"five":  5,
+	"six":   6,
+	"seven": 7,
+	"eight": 8,
+	"nine":  9,
+}
+
+func findFirstDigit(target, sVal, siVal string) int {
+	fStr, fiStr := strings.Index(target, sVal), strings.Index(target, siVal)
+
+	if fStr > -1 && fiStr > -1 {
+		if fStr < fiStr {
+			return fStr
+		} else {
+			return fiStr
+		}
+	}
+
+	if fStr > -1 {
+		return fStr
+	}
+
+	return fiStr
+}
+
+func findLastDigit(target, sVal, siVal string) int {
+	lStr, liStr := strings.LastIndex(target, sVal), strings.LastIndex(target, siVal)
+
+	if lStr > -1 && liStr > -1 {
+		if lStr > liStr {
+			return lStr
+		} else {
+			return liStr
+		}
+	}
+
+	if lStr > -1 {
+		return lStr
+	}
+
+	return liStr
+}
+
+func naiveParseString(currString string) []int {
+	first, last := 0, 0
+	fidx, lidx := -1, -1
+
+	for key, value := range digitStrings {
+		nfidx := findFirstDigit(currString, key, strconv.Itoa(value))
+		if fidx < 0 {
+			fidx = nfidx
+		}
+
+		if nfidx > -1 && nfidx <= fidx {
+			first = value
+			fidx = nfidx
+		}
+
+		nlidx := findLastDigit(currString, key, strconv.Itoa(value))
+		if lidx < 0 {
+			lidx = nlidx
+		}
+
+		if nlidx > -1 && nlidx >= lidx {
+			last = value
+			lidx = nlidx
+		}
+	}
+
+	return []int{first, last}
+}
+
+type finderFn = func(string) []int
+
+func findPossibleDigits(str string) []int {
+	// Note: Workarounds because positive/negative lookaheads are not supported
+	// Link - https://github.com/golang/go/issues/18868
+
+	re := regexp.MustCompile(`(\d|one|two|three|four|five|six|seven|eight|nine)`)
+	// split via the regex and return all substrings
+	result := re.FindAllString(str, -1)
+	fmt.Println("result", result)
+
+	var ints []int
+	for _, str := range result {
+		if val, ok := digitStrings[str]; ok {
+			ints = append(ints, val)
+		} else {
+			i, err := strconv.Atoi(str)
+			utils.CheckAndPanic(err)
+
+			ints = append(ints, i)
+		}
+	}
+
+	fmt.Print("ints", ints)
+	return ints
+}
+
+func findDigits(str string) []int {
+	re := regexp.MustCompile(`(\d)`)
+	// split via the regex and return all substrings
+	result := re.FindAllString(str, -1)
+
+	var ints []int
+
+	for _, str := range result {
+		i, err := strconv.Atoi(str)
+		utils.CheckAndPanic(err)
+
+		ints = append(ints, i)
+
+	}
+	return ints
+}
 
 func calculateCalibrationValue(a, b int) int {
 	str := fmt.Sprintf("%d%d", a, b)
 	v, err := strconv.Atoi(str)
 	utils.CheckAndPanic(err)
+
+	// fmt.Printf(" -> %d\n", v)
 	return v
 }
 
-func calibrate(str string) int {
-	ints := utils.FindDigitsInString(str)
+func calibrate(str string, fn finderFn) int {
+	ints := fn(str)
 
 	switch l := len(ints); {
 	case l > 1:
@@ -64,25 +188,30 @@ func calibrate(str string) int {
 	}
 }
 
-func parseInput(data []string, index int, val int) int {
+func parseInput(data []string, index int, val int, fn finderFn) int {
 	if index < len(data) {
-		sum := val + calibrate(data[index])
-		return parseInput(data, index+1, sum)
+		sum := val + calibrate(data[index], fn)
+		return parseInput(data, index+1, sum, fn)
 	}
 	return val
 }
 
+func part2(data []string) {
+	val := parseInput(data, 0, 0, naiveParseString)
+	// val := parseInput(data, 0, 0, findPossibleDigits)
+	utils.PrintResult(2, fmt.Sprintf("sum %d", val))
+}
+
 func part1(data []string) {
-	val := parseInput(data, 0, 0)
+	val := parseInput(data, 0, 0, findDigits)
 	utils.PrintResult(1, fmt.Sprintf("sum %d", val))
 }
 
 func main() {
 	utils.Banner(utils.BannerConfig{Year: 2023, Day: 1})
-	// Read all the numbers
+	// Read all the calibration values
 	input := utils.LoadData("1.txt")
-	// fmt.Println("input", input)
 
 	part1(input)
-	// part2(data)
+	part2(input)
 }

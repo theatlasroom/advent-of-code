@@ -79,7 +79,7 @@ func PrintResult(part int, resultString string) {
 }
 
 func FindDigitsInString(str string) []int {
-	re := regexp.MustCompile(`(\d)`)
+	re := regexp.MustCompile(`(\d|one|two|three|four|five|six|seven|eight|nine)`)
 	// split via the regex and return all substrings
 	result := re.FindAllString(str, -1)
 
