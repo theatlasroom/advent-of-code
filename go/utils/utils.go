@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"strconv"
 	s "strings"
 )
@@ -71,6 +72,26 @@ func Banner(cfg BannerConfig) {
 	fmt.Println("==============================")
 	fmt.Printf(" Advent of code %d - Day %d\n", cfg.Year, cfg.Day)
 	fmt.Println("==============================")
+}
+
+func PrintResult(part int, resultString string) {
+	fmt.Printf("Part %d: %s\n", part, resultString)
+}
+
+func FindDigitsInString(str string) []int {
+	re := regexp.MustCompile(`(\d)`)
+	// split via the regex and return all substrings
+	result := re.FindAllString(str, -1)
+
+	var ints []int
+
+	for _, str := range result {
+		i, err := strconv.Atoi(str)
+		CheckAndPanic(err)
+
+		ints = append(ints, i)
+	}
+	return ints
 }
 
 const defaultDelim = "\n"
